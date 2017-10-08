@@ -41,6 +41,9 @@ the 1ms period.
 
 void main(void)
 {
+  static u32 u32Counter1 = 0;
+  u32Counter1++;
+  
   G_u32SystemFlags |= _SYSTEM_INITIALIZING;
 
   /* Low level initialization */

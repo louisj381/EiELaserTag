@@ -1,0 +1,2 @@
+The main loop rule:
+All the initialization stuff happens once, and thesuper-loop runs infinitely, and for the most part runs every 1ms cycle.
