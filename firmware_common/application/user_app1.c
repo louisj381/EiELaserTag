@@ -99,23 +99,20 @@ void UserApp1Initialize(void)
     UserApp1_StateMachine = UserApp1SM_Error;
   }
   
-  /* Initialize all unused LEDs to off*/
+  /* Initialize all LEDs to off*/
+  LedOff(WHITE);
+  LedOff(PURPLE);
+  LedOff(BLUE);
   LedOff(CYAN);
   LedOff(GREEN);
   LedOff(YELLOW);
   LedOff(ORANGE);
+  LedOff(RED);
   
-  /* Turn on desired LEDs using the ON function */
-  LedOn(BLUE);
-  LedOn(PURPLE);
-  /*we need to set the LED to on before toggling it
-  because otherwise toggle assumes duty cycle of 0 */
-
-  LedBlink(RED, LED_2HZ);
-  
-  LedPWM(WHITE, LED_PWM_5);
-  
-  
+  /* Turn on backlight, to white */
+  LedOn(LCD_RED);
+  LedOn(LCD_GREEN);
+  LedOn(LCD_BLUE);
 
 } /* end UserApp1Initialize() */
 
@@ -157,12 +154,19 @@ static void UserApp1SM_Idle(void)
   //toggle the purple LED every 500ms:
   static u16 u16BlinkCount = 0;
  
+  static u8 u8Counter = 0;
   u16BlinkCount++;
   
   if (u16BlinkCount == 500)
   {
     
-    u16BlinkCount = 0;    
+    u16BlinkCount = 0;  
+    /* Update the counter and roll at 16 */
+    u8Counter++;
+    if (u8Counter == 16)
+    {
+      u8Counter = 0;
+    }
     LedToggle(PURPLE);
   }
   
