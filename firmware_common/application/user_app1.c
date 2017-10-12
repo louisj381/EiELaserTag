@@ -98,6 +98,24 @@ void UserApp1Initialize(void)
     /* The task isn't properly initialized, so shut it down and don't run */
     UserApp1_StateMachine = UserApp1SM_Error;
   }
+  
+  /* Initialize all unused LEDs to off*/
+  LedOff(CYAN);
+  LedOff(GREEN);
+  LedOff(YELLOW);
+  LedOff(ORANGE);
+  
+  /* Turn on desired LEDs using the ON function */
+  LedOn(BLUE);
+  LedOn(PURPLE);
+  /*we need to set the LED to on before toggling it
+  because otherwise toggle assumes duty cycle of 0 */
+
+  LedBlink(RED, LED_2HZ);
+  
+  LedPWM(WHITE, LED_PWM_5);
+  
+  
 
 } /* end UserApp1Initialize() */
 
@@ -136,7 +154,18 @@ State Machine Function Definitions
 /* Wait for ??? */
 static void UserApp1SM_Idle(void)
 {
-
+  //toggle the purple LED every 500ms:
+  static u16 u16BlinkCount = 0;
+ 
+  u16BlinkCount++;
+  
+  if (u16BlinkCount == 500)
+  {
+    
+    u16BlinkCount = 0;    
+    LedToggle(PURPLE);
+  }
+  
 } /* end UserApp1SM_Idle() */
     
 
