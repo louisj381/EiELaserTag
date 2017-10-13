@@ -108,7 +108,6 @@ void UserApp1Initialize(void)
   LedOff(YELLOW);
   LedOff(ORANGE);
   LedOff(RED);
-  
   /* Turn on backlight, to white */
   LedOn(LCD_RED);
   LedOn(LCD_GREEN);
@@ -151,13 +150,13 @@ State Machine Function Definitions
 /* Wait for ??? */
 static void UserApp1SM_Idle(void)
 {
-  //toggle the purple LED every 500ms:
+  //toggle the purple LED every 500ms
   static u16 u16BlinkCount = 0;
- 
+
   static u8 u8Counter = 0;
   u16BlinkCount++;
   
-  if (u16BlinkCount == 500)
+  if (u16BlinkCount == 3000)
   {
     
     u16BlinkCount = 0;  
@@ -169,6 +168,46 @@ static void UserApp1SM_Idle(void)
     }
     LedToggle(PURPLE);
   }
+  
+  /* Parse the current count to set the LEDs.
+    Red is bit 0, Orange is bit 1,
+    Yellow is bit 2, green is bit 3. */
+  
+    if (u8Counter & 0x01)
+    {
+      LedOn(RED);
+    }
+    else
+    {
+      LedOff(RED);
+    }
+  
+    if (u8Counter & 0x02)
+    {
+      LedOn(ORANGE);
+    }
+    else
+    {
+      LedOff(ORANGE);
+    }
+    
+    if (u8Counter & 0x04)
+    {
+      LedOn(YELLOW);
+    }
+    else
+    {
+      LedOff(YELLOW);
+    }
+  
+    if (u8Counter & 0x08)
+    {
+      LedOn(GREEN);
+    }
+    else
+    {
+      LedOff(GREEN);
+    }
   
 } /* end UserApp1SM_Idle() */
     
