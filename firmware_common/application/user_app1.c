@@ -108,6 +108,7 @@ void UserApp1Initialize(void)
   LedOff(YELLOW);
   LedOff(ORANGE);
   LedOff(RED);
+  LedPWM(CYAN, LED_PWM_0);
   /* Turn on backlight, to white */
   LedOn(LCD_RED);
   LedOn(LCD_GREEN);
@@ -155,18 +156,40 @@ static void UserApp1SM_Idle(void)
   static u8 u8ColorIndex = 0;
   static u8 u8Counter = 0;
   u16BlinkCount++;
+  static LedRateType DimIndex = LED_PWM_0;
+  static bool increasing = TRUE;
   
-  if (u16BlinkCount == 200)
+  if (u16BlinkCount == 40)
   {
-    
+    LedPWM(CYAN, DimIndex);
     u16BlinkCount = 0;  
+    //increment/decrement value every cycle
+    
+    if (DimIndex == LED_PWM_100)
+    {
+      increasing = FALSE;
+    }
+    else if (DimIndex == LED_PWM_0)
+    {
+        increasing = TRUE;
+    }
+    
+    if (increasing)
+    {
+      DimIndex++;
+    }
+    else if (!increasing)
+    {
+      DimIndex--;
+    }
+
     /* Update the counter and roll at 16 */
-    u8Counter++;
+    //u8Counter++;
     if (u8Counter == 16)
     {
       u8Counter = 0;
     }
-       //Manage the back light color   
+/*       Manage the back light color   
     if(u8ColorIndex == 7)
     {
       u8ColorIndex = 0;
@@ -222,7 +245,7 @@ static void UserApp1SM_Idle(void)
     LedOff(LCD_GREEN);
     LedOff(LCD_BLUE);
     break;
-  }
+  }     */
          u8ColorIndex++;
 }
 
