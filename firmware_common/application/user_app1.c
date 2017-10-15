@@ -152,7 +152,7 @@ static void UserApp1SM_Idle(void)
 {
   //toggle the purple LED every 500ms
   static u16 u16BlinkCount = 0;
-
+  static u8 u8ColorIndex = 0;
   static u8 u8Counter = 0;
   u16BlinkCount++;
   
@@ -162,13 +162,70 @@ static void UserApp1SM_Idle(void)
     u16BlinkCount = 0;  
     /* Update the counter and roll at 16 */
     u8Counter++;
-    if (u8Counter == 64)
+    if (u8Counter == 16)
     {
       u8Counter = 0;
     }
-    LedToggle(PURPLE);
-  }
+       //Manage the back light color   
+    if(u8ColorIndex == 7)
+    {
+      u8ColorIndex = 0;
+    }
+
+  //set the backlight color
+  switch(u8ColorIndex)
+  {
+  case 0: //white
+    LedOn(LCD_RED);
+    LedOn(LCD_GREEN);
+    LedOn(LCD_BLUE);
+    break;
+    
+  case 1: //purple
+    LedOn(LCD_RED);
+    LedOff(LCD_GREEN);
+    LedOn(LCD_BLUE);
+    break;  
   
+  case 2: //blue
+    LedOff(LCD_RED);
+    LedOff(LCD_GREEN);
+    LedOn(LCD_BLUE);
+    break;
+  
+  case 3: //cyan
+    LedOff(LCD_RED);
+    LedOn(LCD_GREEN);
+    LedOn(LCD_BLUE);
+    break;
+
+  case 4: //green
+    LedOff(LCD_RED);
+    LedOn(LCD_GREEN);
+    LedOff(LCD_BLUE);
+    break;
+    
+  case 5: //yellow
+    LedOn(LCD_RED);
+    LedOn(LCD_GREEN);
+    LedOff(LCD_BLUE);
+    break;
+    
+  case 6: //red
+    LedOn(LCD_RED);
+    LedOff(LCD_GREEN);
+    LedOff(LCD_BLUE);   
+    break;
+    
+  default: //off  
+    LedOff(LCD_RED);
+    LedOff(LCD_GREEN);
+    LedOff(LCD_BLUE);
+    break;
+  }
+         u8ColorIndex++;
+}
+
   /* Parse the current count to set the LEDs.
     Red is bit 0, Orange is bit 1,
     Yellow is bit 2, green is bit 3. */
@@ -209,7 +266,7 @@ static void UserApp1SM_Idle(void)
       LedOff(GREEN);
     }
   
-    if (u8Counter & 0x10)
+ /*   if (u8Counter & 0x10)
     {
       LedOn(CYAN);
     }
@@ -225,7 +282,7 @@ static void UserApp1SM_Idle(void)
     else
     {
       LedOff(BLUE);
-    }
+    }   */
   
 } /* end UserApp1SM_Idle() */
     
