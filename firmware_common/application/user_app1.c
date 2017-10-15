@@ -156,13 +156,13 @@ static void UserApp1SM_Idle(void)
   static u8 u8Counter = 0;
   u16BlinkCount++;
   
-  if (u16BlinkCount == 3000)
+  if (u16BlinkCount == 200)
   {
     
     u16BlinkCount = 0;  
     /* Update the counter and roll at 16 */
     u8Counter++;
-    if (u8Counter == 16)
+    if (u8Counter == 64)
     {
       u8Counter = 0;
     }
@@ -207,6 +207,24 @@ static void UserApp1SM_Idle(void)
     else
     {
       LedOff(GREEN);
+    }
+  
+    if (u8Counter & 0x10)
+    {
+      LedOn(CYAN);
+    }
+    else
+    {
+      LedOff(CYAN);
+    }
+  
+    if (u8Counter & 0x20)
+    {
+      LedOn(BLUE);
+    }
+    else
+    {
+      LedOff(BLUE);
     }
   
 } /* end UserApp1SM_Idle() */
