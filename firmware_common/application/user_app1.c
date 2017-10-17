@@ -108,7 +108,7 @@ void UserApp1Initialize(void)
   LedOff(YELLOW);
   LedOff(ORANGE);
   LedOff(RED);
-  LedPWM(CYAN, LED_PWM_0);
+  
   /* Turn on backlight, to white */
   LedOn(LCD_RED);
   LedOn(LCD_GREEN);
@@ -156,41 +156,21 @@ static void UserApp1SM_Idle(void)
   static u8 u8ColorIndex = 0;
   static u8 u8Counter = 0;
   u16BlinkCount++;
-  static LedRateType DimIndex = LED_PWM_0;
-  static bool increasing = TRUE;
+  static LedRateType DimIndex = LED_PWM_10;
   
-  if (u16BlinkCount == 40)
+  if (u16BlinkCount == 200)
   {
-    LedPWM(CYAN, DimIndex);
     u16BlinkCount = 0;  
-    //increment/decrement value every cycle
-    
-    if (DimIndex == LED_PWM_100)
-    {
-      increasing = FALSE;
-    }
-    else if (DimIndex == LED_PWM_0)
-    {
-        increasing = TRUE;
-    }
-    
-    if (increasing)
-    {
-      DimIndex++;
-    }
-    else if (!increasing)
-    {
-      DimIndex--;
-    }
-
+    u8Counter++;
     /* Update the counter and roll at 16 */
     //u8Counter++;
-    if (u8Counter == 16)
+    if (u8Counter == 8)
     {
+      DimIndex+=2;
       u8Counter = 0;
     }
-/*       Manage the back light color   
-    if(u8ColorIndex == 7)
+       //Manage the back light color   
+    if(u8ColorIndex == 8)
     {
       u8ColorIndex = 0;
     }
@@ -198,46 +178,52 @@ static void UserApp1SM_Idle(void)
   //set the backlight color
   switch(u8ColorIndex)
   {
-  case 0: //white
-    LedOn(LCD_RED);
-    LedOn(LCD_GREEN);
-    LedOn(LCD_BLUE);
-    break;
-    
-  case 1: //purple
+  case 0: //red
     LedOn(LCD_RED);
     LedOff(LCD_GREEN);
-    LedOn(LCD_BLUE);
+    LedOff(LCD_BLUE);
+    break;
+    
+  case 1: //off
+    LedOff(LCD_RED);
+    LedOff(LCD_GREEN);
+    LedOff(LCD_BLUE);
     break;  
   
-  case 2: //blue
-    LedOff(LCD_RED);
-    LedOff(LCD_GREEN);
-    LedOn(LCD_BLUE);
+  case 2: //yellow
+    LedOn(LCD_RED);
+    LedOn(LCD_GREEN);
+    LedOff(LCD_BLUE);
     break;
   
-  case 3: //cyan
+  case 3: //green
+    LedOff(LCD_RED);
+    LedOn(LCD_GREEN);
+    LedOff(LCD_BLUE);
+    break;
+
+  case 4: //cyan
     LedOff(LCD_RED);
     LedOn(LCD_GREEN);
     LedOn(LCD_BLUE);
     break;
-
-  case 4: //green
+    
+  case 5: //blue
     LedOff(LCD_RED);
-    LedOn(LCD_GREEN);
-    LedOff(LCD_BLUE);
+    LedOff(LCD_GREEN);
+    LedOn(LCD_BLUE);
     break;
     
-  case 5: //yellow
-    LedOn(LCD_RED);
-    LedOn(LCD_GREEN);
-    LedOff(LCD_BLUE);
-    break;
-    
-  case 6: //red
+  case 6: //purple
     LedOn(LCD_RED);
     LedOff(LCD_GREEN);
-    LedOff(LCD_BLUE);   
+    LedOn(LCD_BLUE);
+    break;
+    
+  case 7: //white
+    LedOn(LCD_RED);     
+    LedOn(LCD_GREEN);
+    LedOn(LCD_BLUE);
     break;
     
   default: //off  
@@ -245,7 +231,7 @@ static void UserApp1SM_Idle(void)
     LedOff(LCD_GREEN);
     LedOff(LCD_BLUE);
     break;
-  }     */
+  }     
          u8ColorIndex++;
 }
 
@@ -253,59 +239,71 @@ static void UserApp1SM_Idle(void)
     Red is bit 0, Orange is bit 1,
     Yellow is bit 2, green is bit 3. */
   
-    if (u8Counter & 0x01)
+    if (u8Counter == 0)
     {
-      LedOn(RED);
-    }
+      LedPWM(RED, DimIndex);
+    } /*
     else
     {
       LedOff(RED);
-    }
+    } */
   
-    if (u8Counter & 0x02)
+    if (u8Counter  == 1)
     {
-      LedOn(ORANGE);
-    }
+      LedPWM(ORANGE, DimIndex);
+    }   /*
     else
     {
       LedOff(ORANGE);
-    }
+    }   */
     
-    if (u8Counter & 0x04)
+    if (u8Counter == 2)
     {
-      LedOn(YELLOW);
-    }
+      LedPWM(YELLOW, DimIndex);
+    }   /*
     else
     {
       LedOff(YELLOW);
-    }
+    }   */
   
-    if (u8Counter & 0x08)
+    if (u8Counter == 3)
     {
-      LedOn(GREEN);
-    }
+      LedPWM(GREEN, DimIndex);
+    }   /*
     else
     {
       LedOff(GREEN);
     }
-  
- /*   if (u8Counter & 0x10)
+    */
+  if (u8Counter == 4)   
     {
-      LedOn(CYAN);
+      LedPWM(CYAN, DimIndex);
     }
-    else
+   /* else
     {
       LedOff(CYAN);
     }
-  
-    if (u8Counter & 0x20)
+  */
+    if (u8Counter == 5)
     {
-      LedOn(BLUE);
-    }
+      LedPWM(BLUE, DimIndex);
+    } /*
     else
     {
       LedOff(BLUE);
     }   */
+    if (u8Counter == 6)
+    {
+      LedPWM(PURPLE, DimIndex);
+    }   /*
+      else
+    {
+      LedOff(BLUE);
+    }   */
+    if (u8Counter == 7)
+    {
+      LedPWM(WHITE, DimIndex);
+    }
   
 } /* end UserApp1SM_Idle() */
     
