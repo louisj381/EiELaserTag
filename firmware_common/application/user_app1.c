@@ -85,6 +85,38 @@ Requires:
 Promises:
   - 
 */
+//establish arrays for all functions to use
+  
+#ifdef EIE2
+  static LedNumberType aeCurrentLed[]  =
+  {GREEN0, RED0, BLUE0, GREEN0, RED0, BLUE
+    0};
+  static LedNumberType aeCurrentLed1[]  =
+  {GREEN1, RED1, BLUE1, GREEN1, RED1, BLUE
+    1};
+  static LedNumberType aeCurrentLed2[]  =
+  {GREEN2, RED2, BLUE2, GREEN2, RED2, BLUE
+    2};
+  static LedNumberType aeCurrentLed3[]  =
+  {GREEN3, RED3, BLUE3, GREEN3, RED3, BLUE
+    3};
+#endif /* EIE2 */
+  
+#ifdef EIE1
+  static LedNumberType aeCurrentLed[]  =
+  {LCD_GREEN, LCD_RED, LCD_BLUE, LCD_GREEN,
+  LCD_RED, LCD_BLUE};
+#endif /*EIE 1 */
+static bool abLedRateIncreasing[]   =
+{TRUE,     FALSE,    TRUE,     FALSE,
+TRUE,     FALSE};
+
+static u8 u8CurrentLedIndex  = 0;
+static u8 u8LedCurrentLevel  = 0;
+static u8 u8DutyCycleCounter = 0;
+static u16 u16Counter = COLOR_CYCLE_TIME;
+
+
 void UserApp1Initialize(void)
 {
  
@@ -96,9 +128,15 @@ void UserApp1Initialize(void)
   else
   {
     /* The task isn't properly initialized, so shut it down and don't run */
-    UserApp1_StateMachine = UserApp1SM_Error;
+    UserApp1_StateMachine = UserApp1SM_Error;  
   }
-
+    
+    /* Start with red LED on 100%, green and
+   blue off */
+  LedPWM(LCD_RED, LED_PWM_100);
+  LedPWM(LCD_GREEN, LED_PWM_0);
+  LedPWM(LCD_BLUE, LED_PWM_0);
+    
 } /* end UserApp1Initialize() */
 
   
@@ -119,7 +157,71 @@ Promises:
 void UserApp1RunActiveState(void)
 {
   UserApp1_StateMachine();
+  
+  static bool bCyclingOn = TRUE;
+  
+  if (bCyclingOn)
+  {
+    u16Counter--;
+  }
+/* check for update color every COLOR_CYCLE_TIME ms */
+if (u16Counter == 0)
+{
+  u16Counter = COLOR_CYCLE_TIME;
+  
+  /* Update the current level based on
+  which way it's headed */
+  
+  /* Update the value to the current
+  LED */
+  LedPWM( aeCurrentLed[u8CurrentLedIndex],
+          u8LedCurrentLevel);
+}
 
+/* Toggle cycling on and off */
+if (WasButtonPressed(BUTTON0))
+{
+  ButtonAcknowledge(BUTTON0);
+  bCyclingOn = (bool)!bCyclingOn;
+}
+
+
+/* Update the current level based on which
+way it's headed */
+if (abLedRateIncreasing[u8CurrentLedIndex])
+{
+  u8LedCurrentLevel++;
+}
+else
+{
+  u8LedCurrentLevel--;
+}
+
+/* Change direction once we're at the
+end */
+u8DutyCycleCounter++;
+if (u8DutyCycleCounter == 20)
+{
+  u8DutyCycleCounter = 0;
+  
+  /* Watch for the indexing variable
+  to reset */
+  u8CurrentLedIndex++;
+  if (u8CurrentLedIndex == sizeof(aeCurrentLed))
+  {
+    u8CurrentLedIndex = 0;
+  }
+  
+  /* Set the current level based on what
+  direction we're now going */
+  u8LedCurrentLevel = 20;
+  if (abLedRateIncreasing[u8CurrentLedIndex])
+  {
+    u8LedCurrentLevel = 0;
+  }
+}
+
+  
 } /* end UserApp1RunActiveState */
 
 
