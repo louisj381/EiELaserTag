@@ -88,6 +88,14 @@ Promises:
 void UserApp1Initialize(void)
 {
  
+  LedOff(WHITE);
+  LedOff(PURPLE);
+  LedOff(BLUE);
+  LedOff(CYAN);
+  LedOff(GREEN);
+  LedOff(YELLOW);
+  LedOff(ORANGE);
+  LedOff(RED);
   /* If good initialization, set state to Idle */
   if( 1 )
   {
@@ -138,17 +146,63 @@ static void UserApp1SM_Idle(void)
 {
   static u32 u32IsCounter = 0;
   static u32 u32WasCounter = 0;
+  static bool WhitePressed = TRUE;
+  static bool bYellowBlink = TRUE;
   
-  if (IsButtonPressed(BUTTON0) == TRUE)
+  if (IsButtonPressed(BUTTON2))
   {
     u32IsCounter++;
   }
-  if (WasButtonPressed(BUTTON0) == TRUE)
+  if (WasButtonPressed(BUTTON0))
   {
     u32WasCounter++;
   }
-  ButtonAcknowledge(BUTTON0);
+  //ButtonAcknowledge(BUTTON0);
+  
+  
+  if (WasButtonPressed(BUTTON0))
+  {
+    ButtonAcknowledge(BUTTON0);
+    if (WhitePressed)
+    {
+    LedOn(WHITE);
+    WhitePressed = FALSE;
+    }
+    else
+    {
+      LedOff(WHITE);
+      WhitePressed = TRUE;
+    }
     
+  } 
+  
+   if( WasButtonPressed(BUTTON1) )
+  {
+    /* Be sure to acknowledge the button press */
+    ButtonAcknowledge(BUTTON1);
+
+    /* If the LED is already blinking, toggle it off */
+    if(bYellowBlink)
+    {
+      bYellowBlink = FALSE;
+      LedOff(YELLOW);
+    }
+    else
+    {
+     /* start blinking the LED at the current rate */
+      bYellowBlink = TRUE;
+      LedBlink(YELLOW, LED_1HZ);
+    }
+  }
+   //if button 2 is held for 2 seconds, cyan!
+  if (IsButtonHeld(BUTTON2, 2000))
+  {
+    LedOn(CYAN);
+  } else
+  {
+    LedOff(CYAN);
+  }
+  
 } /* end UserApp1SM_Idle() */
     
 
