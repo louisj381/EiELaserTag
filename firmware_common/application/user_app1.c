@@ -147,7 +147,11 @@ static void UserApp1SM_Idle(void)
   static u32 u32IsCounter = 0;
   static u32 u32WasCounter = 0;
   static bool WhitePressed = TRUE;
-  static bool bYellowBlink = TRUE;
+  static bool bYellowBlink = FALSE;
+  static LedRateType aeBlinkRate[] = {LED_1HZ, LED_2HZ,
+  LED_4HZ, LED_8HZ};
+  static u8 u8BlinkRateIndex = 0;
+  
   
   if (IsButtonPressed(BUTTON2))
   {
@@ -175,8 +179,35 @@ static void UserApp1SM_Idle(void)
     LedOff(BLUE);
   }
 
+  if (WasButtonPressed(BUTTON0))
+  {
+    ButtonAcknowledge(BUTTON0);
+    if (!bYellowBlink)
+    {
+      LedBlink(YELLOW, aeBlinkRate[u8BlinkRateIndex]);
+      bYellowBlink = TRUE;
+    }
+    else if(bYellowBlink)
+      {
+      LedOff(YELLOW);
+      bYellowBlink = FALSE;
+      }
+  }
 
-  
+  if (WasButtonPressed(BUTTON3))
+  {
+    ButtonAcknowledge(BUTTON3);
+    if (bYellowBlink)
+    {
+    u8BlinkRateIndex++;
+    if (u8BlinkRateIndex == 4)
+    {
+      u8BlinkRateIndex = 0;
+    }
+    LedBlink(YELLOW, aeBlinkRate[u8BlinkRateIndex]);
+    }
+  }
+
   
   
 } /* end UserApp1SM_Idle() */
