@@ -68,7 +68,23 @@ Function Definitions
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* Public functions                                                                                                   */
 /*--------------------------------------------------------------------------------------------------------------------*/
-
+bool PasswordCheck(void)        //function works backwards
+{
+  if (WasButtonPressed(BUTTON2))
+  {
+    ButtonAcknowledge(BUTTON2);
+    if (WasButtonPressed(BUTTON1))
+    {
+       ButtonAcknowledge(BUTTON1);
+      if (WasButtonPressed(BUTTON0))
+      {
+        ButtonAcknowledge(BUTTON0);
+        return TRUE;
+      }
+    }
+  }
+  return FALSE;
+}
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* Protected functions                                                                                                */
 /*--------------------------------------------------------------------------------------------------------------------*/
@@ -95,7 +111,7 @@ void UserApp1Initialize(void)
   LedOff(GREEN);
   LedOff(YELLOW);
   LedOff(ORANGE);
-  LedOff(RED);
+  LedOn(RED);
   /* If good initialization, set state to Idle */
   if( 1 )
   {
@@ -146,11 +162,8 @@ static void UserApp1SM_Idle(void)
 {
   static u32 u32IsCounter = 0;
   static u32 u32WasCounter = 0;
-  static bool WhitePressed = TRUE;
-  static bool bYellowBlink = FALSE;
-  static LedRateType aeBlinkRate[] = {LED_1HZ, LED_2HZ,
-  LED_4HZ, LED_8HZ};
-  static u8 u8BlinkRateIndex = 0;
+  static bool PasswordSet = FALSE;
+ // static u8 u8BlinkRateIndex = 0;
   
   
   if (IsButtonPressed(BUTTON2))
@@ -161,54 +174,21 @@ static void UserApp1SM_Idle(void)
   {
     u32WasCounter++;
   }
+  if (PasswordCheck() == TRUE)
+  {
+    PasswordSet = TRUE;
+  }
     
-  if (IsButtonPressed(BUTTON1))
+  if (PasswordSet)
   {
-    LedOn(PURPLE);
-  }
-  else
+    LedBlink(GREEN, LED_2HZ);
+    LedOff(RED);
+    PasswordSet = FALSE;
+  } 
+  if (!PasswordSet)
   {
-    LedOff(PURPLE);
+    LedBlink(RED, LED_2HZ);
   }
-  if (IsButtonPressed(BUTTON2))
-  {
-     LedOn(BLUE);
-  }
-  else
-  {
-    LedOff(BLUE);
-  }
-
-  if (WasButtonPressed(BUTTON0))
-  {
-    ButtonAcknowledge(BUTTON0);
-    if (!bYellowBlink)
-    {
-      LedBlink(YELLOW, aeBlinkRate[u8BlinkRateIndex]);
-      bYellowBlink = TRUE;
-    }
-    else if(bYellowBlink)
-      {
-      LedOff(YELLOW);
-      bYellowBlink = FALSE;
-      }
-  }
-
-  if (WasButtonPressed(BUTTON3))
-  {
-    ButtonAcknowledge(BUTTON3);
-    if (bYellowBlink)
-    {
-    u8BlinkRateIndex++;
-    if (u8BlinkRateIndex == 4)
-    {
-      u8BlinkRateIndex = 0;
-    }
-    LedBlink(YELLOW, aeBlinkRate[u8BlinkRateIndex]);
-    }
-  }
-
-  
   
 } /* end UserApp1SM_Idle() */
     
