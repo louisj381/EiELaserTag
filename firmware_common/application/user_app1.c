@@ -160,34 +160,34 @@ State Machine Function Definitions
 /* Wait for ??? */
 static void UserApp1SM_Idle(void)
 {
-  static u32 u32IsCounter = 0;
-  static u32 u32WasCounter = 0;
-  static bool PasswordSet = FALSE;
- // static u8 u8BlinkRateIndex = 0;
+  static bool PasswordSet = FALSE;  
   
-  
-  if (IsButtonPressed(BUTTON2))
-  {
-    u32IsCounter++;
-  }
-  if (WasButtonPressed(BUTTON0))
-  {
-    u32WasCounter++;
-  }
   if (PasswordCheck() == TRUE)
   {
     PasswordSet = TRUE;
   }
     
-  if (PasswordSet)
+  if (WasButtonPressed(BUTTON3))
   {
-    LedBlink(GREEN, LED_2HZ);
-    LedOff(RED);
-    PasswordSet = FALSE;
-  } 
-  if (!PasswordSet)
+    ButtonAcknowledge(BUTTON3);
+    if (PasswordSet)
+    {
+      LedBlink(GREEN, LED_2HZ);
+      LedOff(RED);
+      PasswordSet = FALSE;
+    } 
+    else 
+    {
+      LedOn(RED);
+      LedOff(GREEN);
+    }
+  }
+  if (!PasswordSet && (WasButtonPressed(BUTTON3)|| WasButtonPressed(BUTTON2) ||
+      WasButtonPressed(BUTTON1) || WasButtonPressed(BUTTON0)))
   {
-    LedBlink(RED, LED_2HZ);
+    ButtonAcknowledge(BUTTON3);
+    LedOn(RED);
+    LedOff(GREEN);
   }
   
 } /* end UserApp1SM_Idle() */
