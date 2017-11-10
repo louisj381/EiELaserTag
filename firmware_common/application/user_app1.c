@@ -161,6 +161,7 @@ State Machine Function Definitions
 static void UserApp1SM_Idle(void)
 {
   static bool PasswordSet = FALSE;  
+  static bool Clear = FALSE;
   
   if (PasswordCheck() == TRUE)
   {
@@ -170,6 +171,7 @@ static void UserApp1SM_Idle(void)
   if (WasButtonPressed(BUTTON3))
   {
     ButtonAcknowledge(BUTTON3);
+    Clear = TRUE;
     if (PasswordSet)
     {
       LedBlink(GREEN, LED_2HZ);
@@ -178,17 +180,27 @@ static void UserApp1SM_Idle(void)
     } 
     else 
     {
-      LedOn(RED);
+      LedBlink(RED, LED_2HZ);
       LedOff(GREEN);
     }
+  
   }
-  if (!PasswordSet && (WasButtonPressed(BUTTON3)|| WasButtonPressed(BUTTON2) ||
+     
+    
+    if (Clear && (WasButtonPressed(BUTTON3)|| WasButtonPressed(BUTTON2) ||
       WasButtonPressed(BUTTON1) || WasButtonPressed(BUTTON0)))
   {
+    //PasswordSet = FALSE;
     ButtonAcknowledge(BUTTON3);
+    ButtonAcknowledge(BUTTON2);
+    ButtonAcknowledge(BUTTON1);
+    ButtonAcknowledge(BUTTON0);
+    
     LedOn(RED);
     LedOff(GREEN);
   }
+  
+ 
   
 } /* end UserApp1SM_Idle() */
     
