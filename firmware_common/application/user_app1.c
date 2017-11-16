@@ -58,7 +58,6 @@ Global variable definitions with scope limited to this local application.
 Variable names shall start with "UserApp1_" and be declared as static.
 ***********************************************************************************************************************/
 static fnCode_type UserApp1_StateMachine;            /* The state machine function pointer */
-
 //static u32 UserApp1_u32Timeout;                      /* Timeout counter used across states */
 
 
@@ -69,29 +68,21 @@ Function Definitions
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* Public functions                                                                                                   */
 /*--------------------------------------------------------------------------------------------------------------------*/
-bool PasswordCheck(int count)        //function works backwards
+bool PasswordCheck(void)        //function works backwards
 {
- 
-  
-    if (WasButtonPressed(BUTTON2))
+  if (WasButtonPressed(BUTTON2))
   {
     ButtonAcknowledge(BUTTON2);
     if (WasButtonPressed(BUTTON1))
     {
-      ButtonAcknowledge(BUTTON1);
+       ButtonAcknowledge(BUTTON1);
       if (WasButtonPressed(BUTTON0))
       {
         ButtonAcknowledge(BUTTON0);
-        if (count == 3)
         return TRUE;
       }
     }
   }
-  
-
-    
-  
-
   return FALSE;
 }
 /*--------------------------------------------------------------------------------------------------------------------*/
@@ -169,44 +160,10 @@ State Machine Function Definitions
 /* Wait for ??? */
 static void UserApp1SM_Idle(void)
 {
-  static int counter = 0;
-   bool button2 = FALSE;
-   bool button1 = FALSE;
-   bool button0 = FALSE;
-  if (WasButtonPressed(BUTTON2))
-  {
-    button2 = TRUE;
-  }  
-  if (WasButtonPressed(BUTTON1))
-  {
-    button1 = TRUE;
-  }  
-  if (WasButtonPressed(BUTTON0))
-  {
-    button0 = TRUE;
-  }
-    
-  
-  if (button2 == TRUE)
-  {
-    counter+=1;
-    button2 = FALSE;
-  }
-  if (button1 == TRUE)
-  {
-    counter+=1;
-    button1 = FALSE;
-  }
-  if (button0 == TRUE)
-  {
-    counter+=1;
-    button0 = FALSE;
-  }
-  
   static bool PasswordSet = FALSE;  
   static bool Clear = FALSE;
   
-  if (PasswordCheck(counter) == TRUE)
+  if (PasswordCheck() == TRUE)
   {
     PasswordSet = TRUE;
   }
