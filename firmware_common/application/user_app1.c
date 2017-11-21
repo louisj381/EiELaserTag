@@ -53,7 +53,7 @@ extern volatile u32 G_u32SystemTime1ms;                /* From board-specific so
 extern volatile u32 G_u32SystemTime1s;                 /* From board-specific source file */
 
 extern u8 G_au8DebugScanfBuffer[];
-extern u8 G_au8DebugScanfCharCount;
+extern u8 G_u8DebugScanfCharCount;
 
 
 
@@ -62,6 +62,8 @@ Global variable definitions with scope limited to this local application.
 Variable names shall start with "UserApp1_" and be declared as static.
 ***********************************************************************************************************************/
 static fnCode_type UserApp1_StateMachine;            /* The state machine function pointer */
+static u8 UserApp_au8UserInputBuffer[U16_USER_INPUT_BUFFER_SIZE ];
+
 //static u32 UserApp1_u32Timeout;                      /* Timeout counter used across states */
 
 
@@ -103,19 +105,10 @@ void UserApp1Initialize(void)
     UserApp1_StateMachine = UserApp1SM_Error;
   }
   
-  u8 au8String[] = "A string to print that returns cursor to start of next line.\n\r";
-  u8 au8String2[] = "Here's a number: ";
-  u8 au8String3[] = " < The 'cursor' was here after the number.";
-  u32 u32Number = 1234567;
-  
-  DebugPrintf(au8String);
-  DebugPrintf(au8String2);
-  DebugPrintNumber(u32Number);
-  DebugPrintf(au8String3);
-  DebugLineFeed();
-  DebugLineFeed();
-  DebugPrintf(au8String3);
-  DebugLineFeed();
+  for (u16 i = 0; i < U16_USER_INPUT_BUFFER_SIZE; i++)
+  {
+  UserApp_au8UserInputBuffer[i] = 0;
+  }
 
 } /* end UserApp1Initialize() */
 
@@ -154,15 +147,38 @@ State Machine Function Definitions
 /* Wait for ??? */
 static void UserApp1SM_Idle(void)
 {
-  u32 static counter = 0;
-  u32 static cycles = 0;
-  for (counter = 0; counter <= 5000; counter++)
+  static u8 u8NumCharsMessage[] = "\n\rCharacters in buffer: ";
+  //print number of characters in scanf
+  if (WasButtonPressed(BUTTON0))
   {
-    if (counter == 4999)
+    ButtonAcknowledge(BUTTON0);
+    
+    DebugPrintf(u8NumCharsMessage);
+    DebugPrintNumber(G_u8DebugScanfCharCount);
+    DebugLineFeed();
+  }
+  static u8 au8BufferMessage[] = "\n\rBuffer contents: \n\r";
+  u8 u8CharCount;
+  
+  if (WasButtonPressed(BUTTON1))
+  {
+    ButtonAcknowledge(BUTTON1);
+    //Read the buffer & print contents
+    u8CharCount = DebugScanf(UserApp_au8UserInputBuffer);
+    UserApp_au8UserInputBuffer[u8CharCount] = '\0';
+    DebugPrintf(au8BufferMessage);
+    if (u8CharCount > 0)
     {
-      cycles++;
+      DebugPrintf(UserApp_au8UserInputBuffer);
+      DebugLineFeed();
+    }
+    else
+    {
+      DebugPrintf("EMPTY!");
+      DebugLineFeed();
     }
   }
+  
 } /* end UserApp1SM_Idle() */
     
 
