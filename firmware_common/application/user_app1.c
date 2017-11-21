@@ -154,9 +154,14 @@ State Machine Function Definitions
 /* Wait for ??? */
 static void UserApp1SM_Idle(void)
 {
-
-  for (u32 i = 0; i < 5; i++)
+  u32 static counter = 0;
+  u32 static cycles = 0;
+  for (counter = 0; counter <= 5000; counter++)
   {
+    if (counter == 4999)
+    {
+      cycles++;
+    }
   }
 } /* end UserApp1SM_Idle() */
     
