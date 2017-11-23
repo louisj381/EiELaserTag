@@ -63,6 +63,7 @@ Variable names shall start with "UserApp1_" and be declared as static.
 ***********************************************************************************************************************/
 static fnCode_type UserApp1_StateMachine;            /* The state machine function pointer */
 static u8 UserApp_au8UserInputBuffer[U16_USER_INPUT_BUFFER_SIZE ];
+static u8 u8NameArray[] = "louis";
 
 //static u32 UserApp1_u32Timeout;                      /* Timeout counter used across states */
 
@@ -107,9 +108,9 @@ void UserApp1Initialize(void)
   
   for (u16 i = 0; i < U16_USER_INPUT_BUFFER_SIZE; i++)
   {
-  UserApp_au8UserInputBuffer[i] = 0;
+  UserApp_au8UserInputBuffer[i] = 0;    //populates array with NULL initially
   }
-
+  
 } /* end UserApp1Initialize() */
 
   
@@ -159,12 +160,15 @@ static void UserApp1SM_Idle(void)
   }
   static u8 au8BufferMessage[] = "\n\rBuffer contents: \n\r";
   u8 u8CharCount;
+  static u32 u32count = 0;
+  static u8 u8NameCount;
+  static u16 k;
   
   if (WasButtonPressed(BUTTON1))
   {
     ButtonAcknowledge(BUTTON1);
     //Read the buffer & print contents
-    u8CharCount = DebugScanf(UserApp_au8UserInputBuffer);
+    u8CharCount = DebugScanf(UserApp_au8UserInputBuffer);       //this clears buffer and count after
     UserApp_au8UserInputBuffer[u8CharCount] = '\0';
     DebugPrintf(au8BufferMessage);
     if (u8CharCount > 0)
@@ -178,6 +182,40 @@ static void UserApp1SM_Idle(void)
       DebugLineFeed();
     }
   }
+  
+  if (WasButtonPressed(BUTTON2))
+  {
+    ButtonAcknowledge(BUTTON2);
+    u8NameCount = DebugScanf(UserApp_au8UserInputBuffer);
+    UserApp_au8UserInputBuffer[u8NameCount] = '\0';
+    DebugLineFeed();
+    if (u8NameCount > 0)
+    {
+      for (k = 0; k < NAME_LENGTH; k++)
+      {
+        if (UserApp_au8UserInputBuffer[k] != u8NameArray[k])
+        {
+          DebugPrintf("Not a match!");
+          DebugLineFeed();
+          break;
+        }
+      }
+      if (k == NAME_LENGTH)
+      {
+        u32count++;
+        DebugPrintf("Match!\n");
+        DebugPrintNumber(u32count);
+        DebugLineFeed();
+      }
+    }   
+    else
+    {
+      DebugPrintf("Array Empty!");
+      DebugLineFeed();
+    }
+        
+  }
+  
   
 } /* end UserApp1SM_Idle() */
     
