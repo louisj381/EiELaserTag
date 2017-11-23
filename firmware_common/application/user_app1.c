@@ -52,6 +52,8 @@ extern volatile u32 G_u32ApplicationFlags;             /* From main.c */
 extern volatile u32 G_u32SystemTime1ms;                /* From board-specific source file */
 extern volatile u32 G_u32SystemTime1s;                 /* From board-specific source file */
 
+extern u8 G_au8DebugScanfBuffer[];
+extern u8 G_u8DebugScanfCharCount;
 
 /***********************************************************************************************************************
 Global variable definitions with scope limited to this local application.
@@ -98,6 +100,11 @@ void UserApp1Initialize(void)
     /* The task isn't properly initialized, so shut it down and don't run */
     UserApp1_StateMachine = UserApp1SM_Error;
   }
+  
+  static u8 Gu8InputBuffer[DEBUG_SCANF_BUFFER_SIZE];
+  DebugScanf(Gu8InputBuffer
+  if (
+  
 } /* end UserApp1Initialize() */
 
   
