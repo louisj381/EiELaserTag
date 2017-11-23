@@ -183,36 +183,45 @@ static void UserApp1SM_Idle(void)
     }
   }
   
-  if (WasButtonPressed(BUTTON2))
+
+    if (WasButtonPressed(BUTTON2))
   {
     ButtonAcknowledge(BUTTON2);
     u8NameCount = DebugScanf(UserApp_au8UserInputBuffer);
     UserApp_au8UserInputBuffer[u8NameCount] = '\0';
     DebugLineFeed();
+    static u16 actualLength = 0;
+     actualLength = (u16)u8NameCount;
     if (u8NameCount > 0)
     {
-      for (k = 0; k < NAME_LENGTH; k++)
+      if (u8NameCount >= 5)
       {
-        if (UserApp_au8UserInputBuffer[k] != u8NameArray[k])
-        {
-          DebugPrintf("Not a match!");
-          DebugLineFeed();
-          break;
-        }
-      }
-      if (k == NAME_LENGTH)
+      for (k = 0; k < actualLength; k++)
       {
-        u32count++;
-        DebugPrintf("Match!\n");
-        DebugPrintNumber(u32count);
-        DebugLineFeed();
+          u16 h;
+          for (h = 0;h < NAME_LENGTH; h++)
+          {
+            if (UserApp_au8UserInputBuffer[k + h] != u8NameArray[h])
+              {
+                break;
+              }
+          }
+          if (h == NAME_LENGTH)
+          {
+            u32count++;
+          }
+        
       }
-    }   
-    else
-    {
-      DebugPrintf("Array Empty!");
+      }
+      DebugPrintf("number of times name was entered: ");
+      DebugPrintNumber(u32count);
       DebugLineFeed();
-    }
+    } 
+     else
+       {
+         DebugPrintf("Array Empty!");
+         DebugLineFeed();
+       }
         
   }
   
