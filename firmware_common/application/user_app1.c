@@ -62,7 +62,7 @@ Variable names shall start with "UserApp1_" and be declared as static.
 static fnCode_type UserApp1_StateMachine;            /* The state machine function pointer */
 //static u32 UserApp1_u32Timeout;                      /* Timeout counter used across states */
 static u32 UserApp1_u32Notes[] = {C3, C3S, D3, D3S, E3, F3, F3S, G3, G3S, A3, A3S, B3};
-
+static u8 UserApp_au8UserInputBuffer[U16_USER_INPUT_BUFFER_SIZE];
 /**********************************************************************************************************************
 Function Definitions
 **********************************************************************************************************************/
@@ -101,9 +101,7 @@ void UserApp1Initialize(void)
     UserApp1_StateMachine = UserApp1SM_Error;
   }
   
-  static u8 Gu8InputBuffer[DEBUG_SCANF_BUFFER_SIZE];
-  /* DebugScanf(Gu8InputBuffer
-  if (  */
+  UserApp_au8UserInputBuffer[U16_USER_INPUT_BUFFER_SIZE] = '\0';
   
 } /* end UserApp1Initialize() */
 
@@ -142,11 +140,68 @@ State Machine Function Definitions
 /* Wait for ??? */
 static void UserApp1SM_Idle(void)
 {
-if (WasButtonPressed(BUTTON0))
+  u8 charcount = 0;
+  static u32 u32Index = 12; 
+  charcount = DebugScanf(UserApp_au8UserInputBuffer);
+  
+if (UserApp_au8UserInputBuffer[0] == 'z')       //to save our ears
 {
-  ButtonAcknowledge(BUTTON0);
-  PWMAudioSetFrequency(BUZZER1, C3);
+  PWMAudioOff(BUZZER1);
 }
+if (UserApp_au8UserInputBuffer[0] == 'q')
+{
+  u32Index = 0;
+}
+else if (UserApp_au8UserInputBuffer[0] == 'w')
+{
+  u32Index = 1;
+}
+else if (UserApp_au8UserInputBuffer[0] == 'e')
+{
+  u32Index = 2;
+}
+else if (UserApp_au8UserInputBuffer[0] == 'r')
+{
+  u32Index = 3;
+}
+else if (UserApp_au8UserInputBuffer[0] == 't')
+{
+  u32Index = 4;
+}
+else if (UserApp_au8UserInputBuffer[0] == 'y')
+{
+  u32Index = 5;
+}
+else if (UserApp_au8UserInputBuffer[0] == 'u')
+{
+  u32Index = 6;
+}
+else if (UserApp_au8UserInputBuffer[0] == 'i')
+{
+  u32Index = 7;
+}
+else if (UserApp_au8UserInputBuffer[0] == 'o')
+{
+  u32Index = 8;
+}
+else if (UserApp_au8UserInputBuffer[0] == 'p')
+{
+  u32Index = 9;
+}
+else if (UserApp_au8UserInputBuffer[0] == '[')
+{
+  u32Index = 10;
+}
+else if (UserApp_au8UserInputBuffer[0] == ']')
+{
+  u32Index = 11;
+}
+if (u32Index < 12)
+{
+  PWMAudioOn(BUZZER1);
+  PWMAudioSetFrequency(BUZZER1, UserApp1_u32Notes[u32Index]);
+}
+  
 if (WasButtonPressed(BUTTON1))
 {
   ButtonAcknowledge(BUTTON1);
@@ -155,7 +210,7 @@ if (WasButtonPressed(BUTTON1))
 if (WasButtonPressed(BUTTON2))
 {
   ButtonAcknowledge(BUTTON2);
-  PWMAudioSetFrequency(BUZZER1, the enum array[INDEX]);
+  //PWMAudioSetFrequency(BUZZER1, the enum array[INDEX]);
 }
 if (WasButtonPressed(BUTTON3))
 {
