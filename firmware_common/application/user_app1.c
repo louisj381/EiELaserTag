@@ -61,7 +61,7 @@ Variable names shall start with "UserApp1_" and be declared as static.
 ***********************************************************************************************************************/
 static fnCode_type UserApp1_StateMachine;            /* The state machine function pointer */
 //static u32 UserApp1_u32Timeout;                      /* Timeout counter used across states */
-
+static u32 UserApp1_u32Notes[] = {C3, C3S, D3, D3S, E3, F3, F3S, G3, G3S, A3, A3S, B3};
 
 /**********************************************************************************************************************
 Function Definitions
@@ -102,8 +102,8 @@ void UserApp1Initialize(void)
   }
   
   static u8 Gu8InputBuffer[DEBUG_SCANF_BUFFER_SIZE];
-  DebugScanf(Gu8InputBuffer
-  if (
+  /* DebugScanf(Gu8InputBuffer
+  if (  */
   
 } /* end UserApp1Initialize() */
 
@@ -145,7 +145,7 @@ static void UserApp1SM_Idle(void)
 if (WasButtonPressed(BUTTON0))
 {
   ButtonAcknowledge(BUTTON0);
-  PWMAudioSetFrequency(BUZZER1, 262);
+  PWMAudioSetFrequency(BUZZER1, C3);
 }
 if (WasButtonPressed(BUTTON1))
 {
@@ -155,7 +155,7 @@ if (WasButtonPressed(BUTTON1))
 if (WasButtonPressed(BUTTON2))
 {
   ButtonAcknowledge(BUTTON2);
-  PWMAudioSetFrequency(BUZZER1, 330);
+  PWMAudioSetFrequency(BUZZER1, the enum array[INDEX]);
 }
 if (WasButtonPressed(BUTTON3))
 {
