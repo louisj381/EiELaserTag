@@ -144,10 +144,6 @@ static void UserApp1SM_Idle(void)
   static u32 u32Index = 12; 
   charcount = DebugScanf(UserApp_au8UserInputBuffer);
   
-if (UserApp_au8UserInputBuffer[0] == 'z')       //to save our ears
-{
-  PWMAudioOff(BUZZER1);
-}
 if (UserApp_au8UserInputBuffer[0] == 'q')
 {
   u32Index = 0;
@@ -196,12 +192,18 @@ else if (UserApp_au8UserInputBuffer[0] == ']')
 {
   u32Index = 11;
 }
-if (u32Index < 12)
+if (UserApp_au8UserInputBuffer[0] == 'z')       //to save our ears
+{
+  PWMAudioOff(BUZZER1);
+}
+else if (u32Index < 12)
 {
   PWMAudioOn(BUZZER1);
   PWMAudioSetFrequency(BUZZER1, UserApp1_u32Notes[u32Index]);
 }
-  
+
+
+
 if (WasButtonPressed(BUTTON1))
 {
   ButtonAcknowledge(BUTTON1);
