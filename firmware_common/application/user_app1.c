@@ -192,15 +192,17 @@ else if (UserApp_au8UserInputBuffer[0] == ']')
 {
   u32Index = 11;
 }
-if (UserApp_au8UserInputBuffer[0] == 'z')       //to save our ears
-{
-  PWMAudioOff(BUZZER1);
-}
-else if (u32Index < 12)
+
+  if (u32Index < 12)
 {
   PWMAudioOn(BUZZER1);
   PWMAudioSetFrequency(BUZZER1, UserApp1_u32Notes[u32Index]);
+  u32Index = 12;
+} else
+{
+  PWMAudioOff(BUZZER1);
 }
+  
 
 
 
