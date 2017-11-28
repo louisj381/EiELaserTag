@@ -140,95 +140,22 @@ State Machine Function Definitions
 /* Wait for ??? */
 static void UserApp1SM_Idle(void)
 {
-  u8 charcount = 0;
-  static u32 u32Index = 12; 
-  charcount = DebugScanf(UserApp_au8UserInputBuffer);
+  static u16 au16NotesRight[] = {F5, F5, F5, F5, F5, E5, D5, E5, F5, G5,
+  A5, A5, A5, A5, A5, G5, F5, G5, A5, A5S, C6, F5, F5, D6, C6, A5S, A5, G5, F5, NO, NO};
+  static u16 au16DurationRight[] = {QN, QN, HN, EN, EN, EN, EN, EN, EN, 
+  QN, QN, QN, HN, EN, EN, EN, EN, EN, EN, QN, HN, HN, EN, EN, EN, EN,  QN, QN, HN, HN, FN};
+  static u16 au16NoteTypeRight[] = {RT, RT, HT, RT, RT, RT, RT, RT, RT,
+  RT, RT, RT, HT, RT, RT, RT, RT, RT, RT, RT,  RT, HT, RT, RT, RT, RT,  RT, RT, RT, HT, HT};
+
+  static u8 u8IndexRight = 0;
+  static u32 u32RightTimer = 0;
+  static u16 u16CurrentDurationRight = 0;
+  static u16 u16NoteSilentDurationRight = 0;
+  static bool bNoteActiveNextRight = TRUE;
+  u8 u8CurrentIndex;
   
-if (UserApp_au8UserInputBuffer[0] == 'q')
-{
-  u32Index = 0;
-}
-else if (UserApp_au8UserInputBuffer[0] == 'w')
-{
-  u32Index = 1;
-}
-else if (UserApp_au8UserInputBuffer[0] == 'e')
-{
-  u32Index = 2;
-}
-else if (UserApp_au8UserInputBuffer[0] == 'r')
-{
-  u32Index = 3;
-}
-else if (UserApp_au8UserInputBuffer[0] == 't')
-{
-  u32Index = 4;
-}
-else if (UserApp_au8UserInputBuffer[0] == 'y')
-{
-  u32Index = 5;
-}
-else if (UserApp_au8UserInputBuffer[0] == 'u')
-{
-  u32Index = 6;
-}
-else if (UserApp_au8UserInputBuffer[0] == 'i')
-{
-  u32Index = 7;
-}
-else if (UserApp_au8UserInputBuffer[0] == 'o')
-{
-  u32Index = 8;
-}
-else if (UserApp_au8UserInputBuffer[0] == 'p')
-{
-  u32Index = 9;
-}
-else if (UserApp_au8UserInputBuffer[0] == '[')
-{
-  u32Index = 10;
-}
-else if (UserApp_au8UserInputBuffer[0] == ']')
-{
-  u32Index = 11;
-}
-
-  if (u32Index < 12)
-{
-  PWMAudioOn(BUZZER1);
-  PWMAudioSetFrequency(BUZZER1, UserApp1_u32Notes[u32Index]);
-  u32Index = 12;
-} else
-{
-  PWMAudioOff(BUZZER1);
-}
   
-
-
-
-if (WasButtonPressed(BUTTON1))
-{
-  ButtonAcknowledge(BUTTON1);
-  PWMAudioSetFrequency(BUZZER1, 294);
-}
-if (WasButtonPressed(BUTTON2))
-{
-  ButtonAcknowledge(BUTTON2);
-  //PWMAudioSetFrequency(BUZZER1, the enum array[INDEX]);
-}
-if (WasButtonPressed(BUTTON3))
-{
-  ButtonAcknowledge(BUTTON3);
-  PWMAudioSetFrequency(BUZZER1, 392);
-}
-if (IsButtonPressed(BUTTON0) || IsButtonPressed(BUTTON1) || IsButtonPressed(BUTTON2) || IsButtonPressed(BUTTON3))
-{
-  PWMAudioOn(BUZZER1);
-}
-else
-{
-  PWMAudioOff(BUZZER1);
-}
+  
 } /* end UserApp1SM_Idle() */
     
 
