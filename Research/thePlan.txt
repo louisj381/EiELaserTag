@@ -3,6 +3,8 @@ A reciever and transmitter on each board, can hit other boards and do software s
 notes:
 we need to check if we can transmit at the correct modularity rate for the reciever to pick it up 38khz
 need to look at spi perf and see what clock it can do
+spi appears to be in memory space 0x40008000 for SAM3U Memory according to data sheet.
+http://asf.atmel.com/docs/latest/applications.html
 3 Plans:
 Plan A:
 We can adjust the SPI on the board(which uses the MCK(master clock)) to the correct frequency, of 38khz, and test by using an ocellescope
