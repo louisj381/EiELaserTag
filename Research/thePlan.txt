@@ -5,6 +5,7 @@ we need to check if we can transmit at the correct modularity rate for the recie
 need to look at spi perf and see what clock it can do
 spi appears to be in memory space 0x40008000 for SAM3U Memory according to data sheet.
 http://asf.atmel.com/docs/latest/applications.html
+SPI Example: http://asf.atmel.com/docs/latest/sam.drivers.spi.example.sam3u_ek/html/index.html
 3 Plans:
 Plan A:
 We can adjust the SPI on the board(which uses the MCK(master clock)) to the correct frequency, of 38khz, and test by using an ocellescope
