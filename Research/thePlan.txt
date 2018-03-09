@@ -8,6 +8,7 @@ http://asf.atmel.com/docs/latest/applications.html
 SPI Example: http://asf.atmel.com/docs/latest/sam.drivers.spi.example.sam3u_ek/html/index.html
 FOUND OP. FREQ:
 http://asf.atmel.com/docs/latest/sam.drivers.spi.example.sam3u_ek/html/sam3u__ek_8h.html#ae9cca1603768bb2e6c82bd0ccedf2b5c
+sam3u_ssp.c has configuration of spi.
 3 Plans:
 Plan A:
 We can adjust the SPI on the board(which uses the MCK(master clock)) to the correct frequency, of 38khz, and test by using an ocellescope
