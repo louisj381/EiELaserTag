@@ -49,12 +49,10 @@ extern volatile u32 G_u32SystemTime1s;                 /* From board-specific so
 Global variable definitions with scope limited to this local application.
 Variable names shall start with "LaserTag_" and be declared as static.
 ***********************************************************************************************************************/
-static fnCode_type LaserTag_StateMachine;            /* The state machine function pointer */
-static u32 LaserTag_u32Timeout;                      /* Timeout counter used across states */
-static AntAssignChannelInfoType LaserTag_sChannelInfo;
-static u8 LaserTag_au8MessageFail[] = "\n\r***ANT channel setup failed***\n\n\r";
-static u8 au8TestMessage[] = {0, 0, 0, 0,
-0xA5, 0, 0, 0};
+static fnCode_type LaserTag_StateMachine; 
+
+
+
 /**********************************************************************************************************************
 Function Definitions
 **********************************************************************************************************************/
@@ -82,42 +80,14 @@ Promises:
 void LaserTagInitialize(void)
 {
  
-  u8 au8WelcomeMessage[] = "ANT Master";
-
-  /* Set a message up on the LCD. Delay is required to let the clear command send. */
-  LCDCommand(LCD_CLEAR_CMD);
-  for(u32 i = 0; i < 10000; i++);
-  LCDMessage(LINE1_START_ADDR, au8WelcomeMessage);
-
- /* Configure ANT for this application */
-  LaserTag_sChannelInfo.AntChannel          = ANT_CHANNEL_USERAPP;
-  LaserTag_sChannelInfo.AntChannelType      = ANT_CHANNEL_TYPE_USERAPP;
-  LaserTag_sChannelInfo.AntChannelPeriodLo  = ANT_CHANNEL_PERIOD_LO_USERAPP;
-  LaserTag_sChannelInfo.AntChannelPeriodHi  = ANT_CHANNEL_PERIOD_HI_USERAPP;
- 
-  LaserTag_sChannelInfo.AntDeviceIdLo       = ANT_DEVICEID_LO_USERAPP;
-  LaserTag_sChannelInfo.AntDeviceIdHi       = ANT_DEVICEID_HI_USERAPP;
-  LaserTag_sChannelInfo.AntDeviceType       = ANT_DEVICE_TYPE_USERAPP;
-  LaserTag_sChannelInfo.AntTransmissionType = ANT_TRANSMISSION_TYPE_USERAPP;
-  LaserTag_sChannelInfo.AntFrequency        = ANT_FREQUENCY_USERAPP;
-  LaserTag_sChannelInfo.AntTxPower          = ANT_TX_POWER_USERAPP;
-
-  LaserTag_sChannelInfo.AntNetwork = ANT_NETWORK_DEFAULT;
-  for(u8 i = 0; i < ANT_NETWORK_NUMBER_BYTES; i++)
+  /* If good initialization, set state to Idle */
+  if( 1 )
   {
-    LaserTag_sChannelInfo.AntNetworkKey[i] = ANT_DEFAULT_NETWORK_KEY;
-  }
-  
-  /* Attempt to queue the ANT channel setup */
-  if( AntAssignChannel(&LaserTag_sChannelInfo) )
-  {
-    LaserTag_u32Timeout = G_u32SystemTime1ms;
-    LaserTag_StateMachine = LaserTagSM_AntChannelAssign;
+    LaserTag_StateMachine = LaserTagSM_Idle;
   }
   else
   {
     /* The task isn't properly initialized, so shut it down and don't run */
-    DebugPrintf(LaserTag_au8MessageFail);
     LaserTag_StateMachine = LaserTagSM_Error;
   }
 
@@ -154,47 +124,10 @@ void LaserTagRunActiveState(void)
 State Machine Function Definitions
 **********************************************************************************************************************/
 
-/*-------------------------------------------------------------------------------------------------------------------*/
-/* Wait for ANT channel assignment */
-static void LaserTagSM_AntChannelAssign()
-{
-  if(AntRadioStatusChannel(ANT_CHANNEL_USERAPP) == ANT_CONFIGURED)
-  {
-    // meaning channel assignment was successful,
-    // so open channel and proceed to Idle state
-    AntOpenChannelNumber(ANT_CHANNEL_USERAPP);
-    LaserTag_StateMachine = LaserTagSM_Idle;
-  }
-  // watch for time out
-  if (IsTimeUp(&LaserTag_u32Timeout, 3000))
-  {
-    DebugPrintf(LaserTag_au8MessageFail);
-    LaserTag_StateMachine = LaserTagSM_Error;
-  }
-}
 
 static void LaserTagSM_Idle(void)
 {
-  if (AntReadAppMessageBuffer())
-  {
-    // new message from ANT task: check what it is
-    if (G_eAntApiCurrentMessageClass == ANT_DATA)
-    {
-      //we got some data
-    }
-    else if (G_eAntApiCurrentMessageClass == ANT_TICK)
-    {
-      //A channel period has gone by:
-      // typically this is when new data should
-      //be queued to be sent
-      // update and queue the new message data
-      au8TestMessage[7]++;
-      if (au8TestMessage[7] == 0)
-      {
-        au8TestMessage[6]++;
-        if (au8TestMessage[6] =
-      }
-  }
+  
 } /* end LaserTagSM_Idle() */
     
 
