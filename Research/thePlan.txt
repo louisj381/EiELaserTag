@@ -6,6 +6,8 @@ need to look at spi perf and see what clock it can do
 spi appears to be in memory space 0x40008000 for SAM3U Memory according to data sheet.
 http://asf.atmel.com/docs/latest/applications.html
 SPI Example: http://asf.atmel.com/docs/latest/sam.drivers.spi.example.sam3u_ek/html/index.html
+FOUND OP. FREQ:
+http://asf.atmel.com/docs/latest/sam.drivers.spi.example.sam3u_ek/html/sam3u__ek_8h.html#ae9cca1603768bb2e6c82bd0ccedf2b5c
 3 Plans:
 Plan A:
 We can adjust the SPI on the board(which uses the MCK(master clock)) to the correct frequency, of 38khz, and test by using an ocellescope
