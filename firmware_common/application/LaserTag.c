@@ -51,7 +51,7 @@ Variable names shall start with "LaserTag_" and be declared as static.
 ***********************************************************************************************************************/
 static fnCode_type LaserTag_StateMachine; 
 static bool LaserTag_Toggle;
-
+static u16 u16ToggleOn;
 
 /**********************************************************************************************************************
 Function Definitions
@@ -71,6 +71,7 @@ void LaserTagToggler(void)
   if(LaserTag_Toggle)
   {
     LaserTag_Toggle = FALSE;
+    u16ToggleOn++;
   }
   else
   {
@@ -95,6 +96,7 @@ Promises:
 */
 void LaserTagInitialize(void)
 {
+  u16ToggleOn = 0;
    /* Set Toggle to false to start. */
   LaserTag_Toggle = FALSE;
    /* Set Timer with 5 tick period before inturrupt. */
@@ -156,11 +158,10 @@ static void LaserTagSM_Idle(void)
 */
 static void LaserTagSM_ModulateOn(void)
 {
-  /* not sure about this inturrupt: */
-  TC1_IrqHandler();
+ 
   if (LaserTag_Toggle)
   {
-    TimerGetTime(TIMER_CHANNEL1);
+   // u16TimerCurrentValue = TimerGetTime(TIMER_CHANNEL1);
   }
 }
 /*-------------------------------------------------------------------------------------------------------------------*/
