@@ -104,7 +104,7 @@ void LaserTagInitialize(void)
    /* Sets LaserTagToggler to the timer function ptr */
   TimerAssignCallback(TIMER_CHANNEL1, LaserTagToggler);
    /* Starts the timer */
-  TimerStart(TIMER_CHANNEL1);
+ // TimerStart(TIMER_CHANNEL1);
   if( 1 )
   {
     LaserTag_StateMachine = LaserTagSM_Idle;
@@ -151,7 +151,7 @@ Within initialization, switch immediately to LaserTagSM_ModulateOn
 */
 static void LaserTagSM_Idle(void)
 {
-  LaserTag_StateMachine = LaserTagSM_ModulateOn;
+  LaserTag_StateMachine = LaserTagSM_ModulateOff;
 } /* end LaserTagSM_Idle() */
 /*
   currently test if toggling at the proper frequency.
@@ -159,15 +159,20 @@ static void LaserTagSM_Idle(void)
 static void LaserTagSM_ModulateOn(void)
 {
  
-  if (LaserTag_Toggle)
-  {
-   // u16TimerCurrentValue = TimerGetTime(TIMER_CHANNEL1);
-  }
+  TimerStart(TIMER_CHANNEL1);
+ 
+}
+
+static void LaserTagSM_ModulateOff(void)
+{
+  TimerStop(TIMER_CHANNEL1);
+  LaserTag_Toggle = FALSE;
 }
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* Handle an error */
 static void LaserTagSM_Error(void)          
 {
+
   
 } /* end LaserTagSM_Error() */
 
