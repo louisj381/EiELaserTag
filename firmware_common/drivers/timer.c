@@ -194,7 +194,7 @@ Requires:
   - fpUserCallback_ is the function address (name) for the user's callback
 
 Promises:
-  - fpTimerxCallback loaded with fpUserCallback_
+  - fpTimerCallback loaded with fpUserCallback_
 */
 void TimerAssignCallback(TimerChannelType eTimerChannel_, fnCode_type fpUserCallback_)
 {
@@ -242,7 +242,6 @@ void TimerInitialize(void)
 {
   u8 au8TimerStarted[] = "Timer1 initialized\n\r";
 
-  /* Channel 0 settings not configured at this time */
 
   /* Load the block configuration register */
   AT91C_BASE_TCB1->TCB_BMR = TCB_BMR_INIT;

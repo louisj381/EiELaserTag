@@ -63,7 +63,7 @@ void LaserTagRunActiveState(void);
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* Private functions                                                                                                  */
 /*--------------------------------------------------------------------------------------------------------------------*/
-
+void LaserTagToggler(void);
 
 /***********************************************************************************************************************
 State Machine Declarations
@@ -72,7 +72,8 @@ static void LaserTagSM_Idle(void);
 
 static void LaserTagSM_Error(void);         
 
-static void LaserTagSM_AntChannelAssign(void);
+static void LaserTagSM_ModulateOn(void);
+
 #endif /* __LASER_TAG_H */
 
 

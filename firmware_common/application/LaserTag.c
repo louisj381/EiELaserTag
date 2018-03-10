@@ -50,7 +50,7 @@ Global variable definitions with scope limited to this local application.
 Variable names shall start with "LaserTag_" and be declared as static.
 ***********************************************************************************************************************/
 static fnCode_type LaserTag_StateMachine; 
-
+static bool LaserTag_Toggle;
 
 
 /**********************************************************************************************************************
@@ -60,7 +60,23 @@ Function Definitions
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* Public functions                                                                                                   */
 /*--------------------------------------------------------------------------------------------------------------------*/
-
+/*
+Function: LasterTagToggler
+Description:
+Changes the truth value of the boolean LaserTagToggler every time the function
+is called.
+*/
+void LaserTagToggler(void)
+{
+  if(LaserTag_Toggle)
+  {
+    LaserTag_Toggle = FALSE;
+  }
+  else
+  {
+    LaserTag_Toggle = TRUE;
+  }
+}
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* Protected functions                                                                                                */
 /*--------------------------------------------------------------------------------------------------------------------*/
@@ -72,15 +88,21 @@ Description:
 Initializes the State Machine and its variables.
 
 Requires:
-  -
+  -NOTE: should check if timerSets properly
 
 Promises:
   - 
 */
 void LaserTagInitialize(void)
 {
- 
-  /* If good initialization, set state to Idle */
+   /* Set Toggle to false to start. */
+  LaserTag_Toggle = FALSE;
+   /* Set Timer with 5 tick period before inturrupt. */
+  TimerSet(TIMER_CHANNEL1, 0x0005);
+   /* Sets LaserTagToggler to the timer function ptr */
+  TimerAssignCallback(TIMER_CHANNEL1, LaserTagToggler);
+   /* Starts the timer */
+  TimerStart(TIMER_CHANNEL1);
   if( 1 )
   {
     LaserTag_StateMachine = LaserTagSM_Idle;
@@ -119,18 +141,28 @@ void LaserTagRunActiveState(void)
 /* Private functions                                                                                                  */
 /*--------------------------------------------------------------------------------------------------------------------*/
 
-
 /**********************************************************************************************************************
 State Machine Function Definitions
 **********************************************************************************************************************/
-
-
+/*
+Within initialization, switch immediately to LaserTagSM_ModulateOn
+*/
 static void LaserTagSM_Idle(void)
 {
-  
+  LaserTag_StateMachine = LaserTagSM_ModulateOn;
 } /* end LaserTagSM_Idle() */
-    
-
+/*
+  currently test if toggling at the proper frequency.
+*/
+static void LaserTagSM_ModulateOn(void)
+{
+  /* not sure about this inturrupt: */
+  TC1_IrqHandler();
+  if (LaserTag_Toggle)
+  {
+    TimerGetTime(TIMER_CHANNEL1);
+  }
+}
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* Handle an error */
 static void LaserTagSM_Error(void)          
