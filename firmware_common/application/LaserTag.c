@@ -154,7 +154,19 @@ Within initialization, switch immediately to LaserTagSM_ModulateOn
 */
 static void LaserTagSM_Idle(void)
 {
-  LaserTag_StateMachine = LaserTagSM_ModulateOn;
+  if(IsButtonPressed(BUTTON0))
+  {
+    LedOn(CYAN);
+    LedOff(RED);
+    LaserTag_StateMachine = LaserTagSM_ModulateOn;
+  }
+  else
+  {
+    LedOff(CYAN);
+    LedOn(RED);
+    LaserTag_StateMachine = LaserTagSM_ModulateOff;
+  }
+  //LaserTag_StateMachine = LaserTagSM_ModulateOn;
 } /* end LaserTagSM_Idle() */
 /*
   currently test if toggling at the proper frequency.
@@ -164,7 +176,7 @@ static void LaserTagSM_ModulateOn(void)
   if(u16Count5ms >= 4)
   {
     u16Count5ms = 0;
-    LaserTag_StateMachine = LaserTagSM_ModulateOff;
+    LaserTag_StateMachine = LaserTagSM_Idle;
   }
   else
     u16Count5ms++;
@@ -177,7 +189,7 @@ static void LaserTagSM_ModulateOff(void)
   if(u16Count5ms >= 4)
   {
     u16Count5ms = 0;
-    LaserTag_StateMachine = LaserTagSM_ModulateOn;
+    LaserTag_StateMachine = LaserTagSM_Idle;
   }
   else
     u16Count5ms++;
