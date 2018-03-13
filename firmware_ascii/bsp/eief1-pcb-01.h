@@ -466,7 +466,7 @@ counter must be set at 1280. */
 0: No effect
 1: Pin is controlled by PIO
 */
-#define PIOA_PER_INIT (u32)0x84030007
+#define PIOA_PER_INIT (u32)0x84030407
 /* 
     31 [1] PA_31_HEARTBEAT PIO control enabled
     30 [0] PA_30_AN_DEMO PIO control not enabled
@@ -494,7 +494,7 @@ counter must be set at 1280. */
     12 [0] PA_12_BLADE_UPOMI PIO control not enabled
 
     11 [0] PA_11_BLADE_UPIMO PIO control not enabled
-    10 [0] PA_10_I2C_SCL PIO control not enabled
+    10 [1] PA_10_I2C_SCL PIO control enabled
     09 [0] PA_09_I2C_SDA PIO control not enabled
     08 [0] PA_08_SD_CS_MCDA3 PIO control not enabled
 
@@ -557,7 +557,7 @@ counter must be set at 1280. */
 0: No effect
 1: Pin is controlled by corresponding peripheral
 */
-#define PIOA_PDR_INIT (u32)0x7BFCFFF8
+#define PIOA_PDR_INIT (u32)0x7BFCFBF8
 /* 
     31 [0] PA_31_HEARTBEAT not controlled by peripheral
     30 [1] PA_30_AN_DEMO controlled by peripheral
@@ -585,7 +585,7 @@ counter must be set at 1280. */
     12 [1] PA_12_BLADE_UPOMI controlled by peripheral
 
     11 [1] PA_11_BLADE_UPIMO controlled by peripheral
-    10 [1] PA_10_I2C_SCL controlled by peripheral
+    10 [0] PA_10_I2C_SCL not controlled by peripheral
     09 [1] PA_09_I2C_SDA controlled by peripheral
     08 [1] PA_08_SD_CS_MCDA3 controlled by peripheral
 
@@ -1009,7 +1009,7 @@ Default start-up IO values are held here.
 0: No effect
 1: Sets the data to be driven on the I/O line.
 */
-#define PIOA_SODR_INIT (u32)0x88010000
+#define PIOA_SODR_INIT (u32)0x88010400
 /* 
     31 [1] PA_31_HEARTBEAT output high 
     30 [0] PA_30_AN_DEMO N/A
@@ -1037,7 +1037,7 @@ Default start-up IO values are held here.
     12 [0] PA_12_BLADE_UPOMI N/A
 
     11 [0] PA_11_BLADE_UPIMO N/A
-    10 [0] PA_10_I2C_SCL N/A
+    10 [1] PA_10_I2C_SCL output high to match LED
     09 [0] PA_09_I2C_SDA N/A
     08 [0] PA_08_SD_CS_MCDA3 N/A
 
@@ -1874,7 +1874,7 @@ Tdiv_slclk = 2*(DIV+1)*Tslow_clock.
 0: No effect
 1: Enables writing PIO_ODSR for the I/O line.
 */
-#define PIOA_OWER_INIT (u32)0xB4010000
+#define PIOA_OWER_INIT (u32)0xB4010400
 /* 
     31 [1] PA_31_HEARTBEAT write enabled
     30 [0] PA_30_AN_DEMO
@@ -1902,7 +1902,7 @@ Tdiv_slclk = 2*(DIV+1)*Tslow_clock.
     12 [0] PA_12_BLADE_UPOMI
 
     11 [0] PA_11_BLADE_UPIMO
-    10 [0] PA_10_I2C_SCL
+    10 [1] PA_10_I2C_SCL  changed
     09 [0] PA_09_I2C_SDA
     08 [0] PA_08_SD_CS_MCDA3
 
