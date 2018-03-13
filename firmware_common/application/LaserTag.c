@@ -90,17 +90,17 @@ Description:
 Initializes the State Machine and its variables.
 
 Requires:
-  -NOTE: should check if timerSets properly
+  -LaserTag Toggler to be active
 
 Promises:
-  - 
+  -
 */
 void LaserTagInitialize(void)
 {
   u16ToggleOn = 0;
-   /* Set Toggle to false to start. */
+    /* Set 5ms counter to 0 to start*/
   u16Count5ms = 0;
-  /* Set 5ms counter to 0 to start*/
+     /* Set Toggle to false to start. */
   LaserTag_Toggle = FALSE;
    /* Set Timer with 5 tick period before inturrupt. */
   TimerSet(TIMER_CHANNEL1, 0x0005);
@@ -150,7 +150,7 @@ void LaserTagRunActiveState(void)
 State Machine Function Definitions
 **********************************************************************************************************************/
 /*
-Within initialization, switch immediately to LaserTagSM_ModulateOn
+
 */
 static void LaserTagSM_Idle(void)
 {
@@ -173,15 +173,16 @@ static void LaserTagSM_Idle(void)
 */
 static void LaserTagSM_ModulateOn(void)
 {
+  TimerStart(TIMER_CHANNEL1);
   if(u16Count5ms >= 4)
   {
     u16Count5ms = 0;
     LaserTag_StateMachine = LaserTagSM_Idle;
   }
   else
+  {
     u16Count5ms++;
-  TimerStart(TIMER_CHANNEL1);
- 
+  }
 }
 
 static void LaserTagSM_ModulateOff(void)
@@ -192,9 +193,11 @@ static void LaserTagSM_ModulateOff(void)
     LaserTag_StateMachine = LaserTagSM_Idle;
   }
   else
+  {
     u16Count5ms++;
-  TimerStop(TIMER_CHANNEL1);
-  LaserTag_Toggle = FALSE;
+    TimerStop(TIMER_CHANNEL1);
+    LaserTag_Toggle = FALSE;
+  }
 }
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* Handle an error */
