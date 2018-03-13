@@ -166,10 +166,9 @@ static void LaserTagSM_Idle(void)
     LedOn(RED);
     LaserTag_StateMachine = LaserTagSM_ModulateOff;
   }
-  //LaserTag_StateMachine = LaserTagSM_ModulateOn;
 } /* end LaserTagSM_Idle() */
 /*
-  currently test if toggling at the proper frequency.
+the proper signal to send to pin and ultimately transmitter
 */
 static void LaserTagSM_ModulateOn(void)
 {
