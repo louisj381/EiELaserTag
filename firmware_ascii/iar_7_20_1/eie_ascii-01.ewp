@@ -2050,13 +2050,13 @@
         <name>$PROJ_DIR$\..\..\firmware_common\application\debug.h</name>
       </file>
       <file>
+        <name>$PROJ_DIR$\..\..\firmware_common\application\LaserTag.h</name>
+      </file>
+      <file>
         <name>$PROJ_DIR$\..\application\main.h</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\firmware_common\application\music.h</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\..\firmware_common\application\user_app1.h</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\firmware_common\application\user_app2.h</name>
@@ -2071,10 +2071,10 @@
         <name>$PROJ_DIR$\..\..\firmware_common\application\debug.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\application\main.c</name>
+        <name>$PROJ_DIR$\..\..\firmware_common\application\LaserTag.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\firmware_common\application\user_app1.c</name>
+        <name>$PROJ_DIR$\..\application\main.c</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\firmware_common\application\user_app2.c</name>
