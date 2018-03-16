@@ -53,6 +53,7 @@ static fnCode_type LaserTag_StateMachine;
 static bool LaserTag_Toggle;
 static u16 u16ToggleOn;
 static u16 u16Count5ms;
+static u32 *pu32SetAddress;
 
 /**********************************************************************************************************************
 Function Definitions
@@ -71,13 +72,16 @@ void LaserTagToggler(void)
 {
   if(LaserTag_Toggle)
   {
+    pu32SetAddress = (u32*)(&(AT91C_BASE_PIOA->PIO_SODR));
     LaserTag_Toggle = FALSE;
     u16ToggleOn++;
   }
   else
   {
+    pu32SetAddress = (u32*)(&(AT91C_BASE_PIOA->PIO_CODR));
     LaserTag_Toggle = TRUE;
   }
+  *pu32SetAddress = PA_10_I2C_SCL;
 }
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* Protected functions                                                                                                */

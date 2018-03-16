@@ -648,7 +648,7 @@ Configures the pin as an output or input.
 0: No effect
 1: Enables the output on the I/O line
 */
-#define PIOA_OER_INIT (u32)0xBF55D3F9
+#define PIOA_OER_INIT (u32)0xBF5597F9
 /* 
     31 [1] PA_31_HEARTBEAT output enabled
     30 [0] PA_30_AN_DEMO input
@@ -671,12 +671,12 @@ Configures the pin as an output or input.
     16 [1] PA_16_BLADE_CS output enabled
 
     15 [1] PA_15_BLADE_SCK output enabled
-    14 [1] PA_14_BLADE_MOSI output enabled
+    14 [0] PA_14_BLADE_MOSI input
     13 [0] PA_13_BLADE_MISO input
     12 [1] PA_12_BLADE_UPOMI output enabled
 
     11 [0] PA_11_BLADE_UPIMO  input
-    10 [0] PA_10_I2C_SCL input
+    10 [1] PA_10_I2C_SCL output enabled
     09 [1] PA_09_I2C_SDA output enabled
     08 [1] PA_08_SD_CS_MCDA3 output enabled
 
@@ -738,7 +738,7 @@ Configures the pin as an output or input.
 0: No effect
 1: Disables the output on the I/O line.
 */
-#define PIOA_ODR_INIT (u32)0x40AA2C06
+#define PIOA_ODR_INIT (u32)0x40AA6806
 /* 
     31 [0] PA_31_HEARTBEAT output 
     30 [1] PA_30_AN_DEMO input
@@ -761,12 +761,12 @@ Configures the pin as an output or input.
     16 [0] PA_16_BLADE_CS output 
 
     15 [0] PA_15_BLADE_SCK output 
-    14 [0] PA_14_BLADE_MOSI output 
+    14 [1] PA_14_BLADE_MOSI input 
     13 [1] PA_13_BLADE_MISO input
     12 [0] PA_12_BLADE_UPOMI output 
 
     11 [1] PA_11_BLADE_UPIMO input
-    10 [1] PA_10_I2C_SCL input 
+    10 [0] PA_10_I2C_SCL output 
     09 [0] PA_09_I2C_SDA input 
     08 [0] PA_08_SD_CS_MCDA3 output 
 
@@ -1009,7 +1009,7 @@ Default start-up IO values are held here.
 0: No effect
 1: Sets the data to be driven on the I/O line.
 */
-#define PIOA_SODR_INIT (u32)0x88014000
+#define PIOA_SODR_INIT (u32)0x88010400
 /* 
     31 [1] PA_31_HEARTBEAT output high 
     30 [0] PA_30_AN_DEMO N/A
@@ -1032,12 +1032,12 @@ Default start-up IO values are held here.
     16 [1] PA_16_BLADE_CS output high
 
     15 [0] PA_15_BLADE_SCK N/A
-    14 [1] PA_14_BLADE_MOSI output high to match LED
+    14 [0] PA_14_BLADE_MOSI
     13 [0] PA_13_BLADE_MISO N/A
     12 [0] PA_12_BLADE_UPOMI N/A
 
     11 [0] PA_11_BLADE_UPIMO N/A
-    10 [0] PA_10_I2C_SCL N/A
+    10 [1] PA_10_I2C_SCL N/A output high to match LED
     09 [0] PA_09_I2C_SDA N/A
     08 [0] PA_08_SD_CS_MCDA3 N/A
 
