@@ -111,7 +111,7 @@ void LaserTagInitialize(void)
    /* Sets LaserTagToggler to the timer function ptr */
   TimerAssignCallback(TIMER_CHANNEL1, LaserTagToggler);
    /* Starts the timer */
- // TimerStart(TIMER_CHANNEL1);
+  TimerStart(TIMER_CHANNEL1);
   if( 1 )
   {
     LaserTag_StateMachine = LaserTagSM_Idle;

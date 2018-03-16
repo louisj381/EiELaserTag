@@ -63,7 +63,7 @@ void main(void)
   TWIInitialize();
   Adc12Initialize();
   
-  LcdInitialize();
+  //LcdInitialize();
   LedInitialize();
   AntInitialize();
   AntApiInitialize();
@@ -95,7 +95,7 @@ void main(void)
     Adc12RunActiveState();
     MessagingRunActiveState();
     DebugRunActiveState();
-    LcdRunActiveState();
+    //LcdRunActiveState();
     AntRunActiveState();
     AntApiRunActiveState();
     SdCardRunActiveState();
