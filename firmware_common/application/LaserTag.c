@@ -53,7 +53,7 @@ static fnCode_type LaserTag_StateMachine;
 static bool LaserTag_Toggle;
 static u16 u16ToggleOn;
 static u16 u16Count5ms;
-static u32 *pu32SetAddress;
+static u32 *pu32ToggleGPIO;
 
 /**********************************************************************************************************************
 Function Definitions
@@ -72,16 +72,18 @@ void LaserTagToggler(void)
 {
   if(LaserTag_Toggle)
   {
-    pu32SetAddress = (u32*)(&(AT91C_BASE_PIOA->PIO_SODR));
+    pu32ToggleGPIO = (u32*)(&(AT91C_BASE_PIOA->PIO_SODR));
     LaserTag_Toggle = FALSE;
     u16ToggleOn++;
+    *pu32ToggleGPIO += 1;
   }
   else
   {
-    pu32SetAddress = (u32*)(&(AT91C_BASE_PIOA->PIO_CODR));
+    pu32ToggleGPIO = (u32*)(&(AT91C_BASE_PIOA->PIO_CODR));
     LaserTag_Toggle = TRUE;
+    *pu32ToggleGPIO += 2;
   }
-  *pu32SetAddress = PA_10_I2C_SCL;
+  //*pu32ToggleGPIO = PA_10_I2C_SCL;
 }
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* Protected functions                                                                                                */
@@ -163,12 +165,14 @@ static void LaserTagSM_Idle(void)
     LedOn(CYAN);
     LedOff(RED);
     LaserTag_StateMachine = LaserTagSM_ModulateOn;
+    *pu32ToggleGPIO += 1;
   }
   else
   {
     LedOff(CYAN);
     LedOn(RED);
     LaserTag_StateMachine = LaserTagSM_ModulateOff;
+    *pu32ToggleGPIO += 1;
   }
 } /* end LaserTagSM_Idle() */
 /*
@@ -180,7 +184,7 @@ static void LaserTagSM_ModulateOn(void)
   if(u16Count5ms >= 4)
   {
     u16Count5ms = 0;
-    LaserTag_StateMachine = LaserTagSM_Idle;
+   // LaserTag_StateMachine = LaserTagSM_Idle;
   }
   else
   {
