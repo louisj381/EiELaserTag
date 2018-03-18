@@ -51,6 +51,7 @@ Variable names shall start with "LaserTag_" and be declared as static.
 ***********************************************************************************************************************/
 static fnCode_type LaserTag_StateMachine; 
 static bool LaserTag_Toggle;
+static u8 u8controlBit;
 static u16 u16ToggleOn;
 static u16 u16Count5ms;
 
@@ -76,16 +77,32 @@ void LaserTagToggler(void)
     pu32ToggleGPIO = (u32*)(&(AT91C_BASE_PIOA->PIO_SODR));
     LaserTag_Toggle = FALSE;
     u16ToggleOn++;
-   // *pu32ToggleGPIO += 1;
   }
   else
   {
     LedOff(PURPLE);
     pu32ToggleGPIO = (u32*)(&(AT91C_BASE_PIOA->PIO_CODR));
     LaserTag_Toggle = TRUE;
-    //*pu32ToggleGPIO += 2;
   }
   *pu32ToggleGPIO = PA_10_I2C_SCL;
+}
+/* end of LaserTagToggler */
+/*------------------------------------------------------------
+Function: gotShot
+Description:
+Checks if the modulated signal of 38 kHz is received by the GPIO pin PA_14_BLADE_MOSI.
+Requires:
+PA_14_BLADE_MOSI is configured correctly as an input pin
+Promises:
+Return true if the signal has been received.
+*/
+bool gotShot(void)
+{
+  u16 u16fiveInputCheck;
+  if (u8controlBit == 0x01)
+  {
+    
+  }
 }
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* Protected functions                                                                                                */
@@ -180,11 +197,12 @@ the proper signal to send to pin and ultimately transmitter
 */
 static void LaserTagSM_ModulateOn(void)
 {
+  u8controlBit = 1;
  TimerStart(TIMER_CHANNEL1);
   if(u16Count5ms >= 4)
   {
     u16Count5ms = 0;
-    LaserTag_StateMachine = LaserTagSM_Idle;
+    LaserTag_StateMachine = LaserTagSM_ModulateOff;
   }
   else
   {
@@ -194,10 +212,19 @@ static void LaserTagSM_ModulateOn(void)
 
 static void LaserTagSM_ModulateOff(void)
 {
+  u8controlBit = 0;
   if(u16Count5ms >= 4)
   {
     u16Count5ms = 0;
-    LaserTag_StateMachine = LaserTagSM_Idle;
+    if (IsButtonPressed(BUTTON0))
+    {
+       LaserTag_StateMachine = LaserTagSM_ModulateOn;
+    }
+    else
+    {
+       LaserTag_StateMachine = LaserTagSM_Idle;      
+    }
+
   }
   else
   {
