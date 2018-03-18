@@ -184,7 +184,7 @@ static void LaserTagSM_ModulateOn(void)
   if(u16Count5ms >= 4)
   {
     u16Count5ms = 0;
-    //LaserTag_StateMachine = LaserTagSM_Idle;
+    LaserTag_StateMachine = LaserTagSM_Idle;
   }
   else
   {
