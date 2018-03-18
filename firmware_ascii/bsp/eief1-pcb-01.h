@@ -1128,7 +1128,7 @@ Initial output values are stored here.
     12 [0] PA_12_BLADE_UPOMI N/A
 
     11 [0] PA_11_BLADE_UPIMO N/A
-    10 [1] PA_10_I2C_SCL N/A  CHANGED
+    10 [0] PA_10_I2C_SCL N/A  CHANGED(again)
     09 [0] PA_09_I2C_SDA N/A
     08 [0] PA_08_SD_CS_MCDA3 N/A
 
@@ -1874,7 +1874,7 @@ Tdiv_slclk = 2*(DIV+1)*Tslow_clock.
 0: No effect
 1: Enables writing PIO_ODSR for the I/O line.
 */
-#define PIOA_OWER_INIT (u32)0xB4014000
+#define PIOA_OWER_INIT (u32)0xB4010400
 /* 
     31 [1] PA_31_HEARTBEAT write enabled
     30 [0] PA_30_AN_DEMO
@@ -1897,12 +1897,12 @@ Tdiv_slclk = 2*(DIV+1)*Tslow_clock.
     16 [1] PA_16_BLADE_CS write enabled
 
     15 [0] PA_15_BLADE_SCK
-    14 [1] PA_14_BLADE_MOSI write enabled (changed)
+    14 [0] PA_14_BLADE_MOSI
     13 [0] PA_13_BLADE_MISO
     12 [0] PA_12_BLADE_UPOMI
 
     11 [0] PA_11_BLADE_UPIMO
-    10 [0] PA_10_I2C_SCL
+    10 [1] PA_10_I2C_SCL write enabled (changed)
     09 [0] PA_09_I2C_SDA
     08 [0] PA_08_SD_CS_MCDA3
 
