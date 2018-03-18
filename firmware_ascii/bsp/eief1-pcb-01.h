@@ -466,7 +466,7 @@ counter must be set at 1280. */
 0: No effect
 1: Pin is controlled by PIO
 */
-#define PIOA_PER_INIT (u32)0x84030007
+#define PIOA_PER_INIT (u32)0x84030407
 /* 
     31 [1] PA_31_HEARTBEAT PIO control enabled
     30 [0] PA_30_AN_DEMO PIO control not enabled
@@ -494,7 +494,7 @@ counter must be set at 1280. */
     12 [0] PA_12_BLADE_UPOMI PIO control not enabled
 
     11 [0] PA_11_BLADE_UPIMO PIO control not enabled
-    10 [0] PA_10_I2C_SCL PIO control not enabled
+    10 [1] PA_10_I2C_SCL PIO control not enabled
     09 [0] PA_09_I2C_SDA PIO control not enabled
     08 [0] PA_08_SD_CS_MCDA3 PIO control not enabled
 
@@ -557,7 +557,7 @@ counter must be set at 1280. */
 0: No effect
 1: Pin is controlled by corresponding peripheral
 */
-#define PIOA_PDR_INIT (u32)0x7BFCFFF8
+#define PIOA_PDR_INIT (u32)0x7BFCFBF8
 /* 
     31 [0] PA_31_HEARTBEAT not controlled by peripheral
     30 [1] PA_30_AN_DEMO controlled by peripheral
@@ -580,7 +580,7 @@ counter must be set at 1280. */
     16 [0] PA_16_BLADE_CS not controlled by peripheral
 
     15 [1] PA_15_BLADE_SCK controlled by peripheral
-    14 [0] PA_14_BLADE_MOSI not controlled by peripheral
+    14 [1] PA_14_BLADE_MOSI not controlled by peripheral
     13 [1] PA_13_BLADE_MISO controlled by peripheral
     12 [1] PA_12_BLADE_UPOMI controlled by peripheral
 
@@ -1100,7 +1100,7 @@ Initial output values are stored here.
 0: No effect
 1: Clears the data to be driven on the I/O line.
 */
-#define PIOA_CODR_INIT (u32)0x30000400
+#define PIOA_CODR_INIT (u32)0x30000000
 /* 
     31 [0] PA_31_HEARTBEAT output high 
     30 [0] PA_30_AN_DEMO N/A
