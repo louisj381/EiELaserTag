@@ -55,6 +55,7 @@ static u8 u8controlBit;
 static u16 u16Count5ms;
 static u16 u16countHigh;
 static u16 u16countLow;
+static u16 u16Lives;
 
 /**********************************************************************************************************************
 Function Definitions
@@ -74,13 +75,11 @@ void LaserTagToggler(void)
   u32 *pu32ToggleGPIO;
   if(LaserTag_Toggle)
   {
-    LedOn(PURPLE);
     pu32ToggleGPIO = (u32*)(&(AT91C_BASE_PIOA->PIO_SODR));
     LaserTag_Toggle = FALSE;
   }
   else
   {
-    LedOff(PURPLE);
     pu32ToggleGPIO = (u32*)(&(AT91C_BASE_PIOA->PIO_CODR));
     LaserTag_Toggle = TRUE;
   }
@@ -115,6 +114,7 @@ bool gotShot(void)
       u16countHigh = 0;
       u16countLow = 0;
       LedOn(WHITE);
+      u16Lives--;
     }
     else if (rHigh) 
     {
@@ -159,7 +159,8 @@ void LaserTagInitialize(void)
   /* Set counter to 0 to start*/
     u16countLow = 0;
   
-   
+   /* Player starts with 3 lives */
+    u16Lives = 3;
   /* Set 5ms counter to 0 to start*/
   u16Count5ms = 0;
      /* Set Toggle to false to start. */
@@ -218,7 +219,32 @@ static void LaserTagSM_Idle(void)
 {
   gotShot();
   LedOn(RED);
-  LedOff(CYAN);
+  LedOff(PURPLE);
+  if(u16Lives == 3)
+  {
+      LedOn(CYAN);
+      LedOn(GREEN);
+      LedOn(YELLOW);
+  }
+  else if(u16Lives == 2)
+  {
+      LedOff(CYAN);
+      LedOn(GREEN);
+      LedOn(YELLOW);
+  }
+    else if(u16Lives == 1)
+  {
+      LedOff(CYAN);
+      LedOff(GREEN);
+      LedOn(YELLOW);
+  }
+    else if(u16Lives == 0)
+  {
+      LedOff(CYAN);
+      LedOff(GREEN);
+      LedOff(YELLOW);
+  }
+  
   if(IsButtonPressed(BUTTON0))
   {
     LaserTag_StateMachine = LaserTagSM_ModulateOn;
@@ -231,7 +257,7 @@ the proper signal to send to pin and ultimately transmitter
 static void LaserTagSM_ModulateOn(void)
 {
   gotShot();
-  LedOn(CYAN);
+  LedOn(PURPLE);
   LedOff(RED);
   u8controlBit = 1;
   TimerStart(TIMER_CHANNEL1);
@@ -249,6 +275,8 @@ static void LaserTagSM_ModulateOn(void)
 static void LaserTagSM_ModulateOff(void)
 {
   gotShot();
+  LedOff(PURPLE);
+  LedOn(RED);
   u8controlBit = 0;
   if(u16Count5ms >= 4)
   {
