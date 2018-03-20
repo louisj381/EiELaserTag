@@ -179,24 +179,21 @@ State Machine Function Definitions
 */
 static void LaserTagSM_Idle(void)
 {
+  LedOn(RED);
+  LedOff(CYAN);
   if(IsButtonPressed(BUTTON0))
   {
-    LedOn(CYAN);
-    LedOff(RED);
     LaserTag_StateMachine = LaserTagSM_ModulateOn;
   }
-  else
-  {
-    LedOff(CYAN);
-    LedOn(RED);
-    LaserTag_StateMachine = LaserTagSM_ModulateOff;
-  }
+
 } /* end LaserTagSM_Idle() */
 /*
 the proper signal to send to pin and ultimately transmitter
 */
 static void LaserTagSM_ModulateOn(void)
 {
+    LedOn(CYAN);
+    LedOff(RED);
   u8controlBit = 1;
  TimerStart(TIMER_CHANNEL1);
   if(u16Count5ms >= 4)
