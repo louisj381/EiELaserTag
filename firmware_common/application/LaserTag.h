@@ -76,6 +76,8 @@ static void LaserTagSM_ModulateOn(void);
 
 static void LaserTagSM_ModulateOff(void);
 
+static void LaserTagSM_Recover(void);
+
 #endif /* __LASER_TAG_H */
 
 

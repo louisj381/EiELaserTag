@@ -56,6 +56,7 @@ static u16 u16Count5ms;
 static u16 u16countHigh;
 static u16 u16countLow;
 static u16 u16Lives;
+static u16 u16RecoverTime;
 
 /**********************************************************************************************************************
 Function Definitions
@@ -107,14 +108,14 @@ bool gotShot(void)
     {
       rHigh = TRUE;
     }
-  
-   
-    if (u16countHigh >=5 && u16countLow>=5) 
+    if (u16countHigh ==5 && u16countLow==5) 
     {
       u16countHigh = 0;
       u16countLow = 0;
       LedOn(WHITE);
       u16Lives--;
+      LedOff(WHITE);
+     LaserTag_StateMachine = LaserTagSM_Recover;
     }
     else if (rHigh) 
     {
@@ -158,6 +159,8 @@ void LaserTagInitialize(void)
     u16countHigh = 0;
   /* Set counter to 0 to start*/
     u16countLow = 0;
+  /* Set recover count to 0 to start */
+    u16RecoverTime = 0;
   
    /* Player starts with 3 lives */
     u16Lives = 3;
@@ -218,7 +221,6 @@ State Machine Function Definitions
 static void LaserTagSM_Idle(void)
 {
   gotShot();
-  LedOn(RED);
   LedOff(PURPLE);
   if(u16Lives == 3)
   {
@@ -243,6 +245,7 @@ static void LaserTagSM_Idle(void)
       LedOff(CYAN);
       LedOff(GREEN);
       LedOff(YELLOW);
+      //make a dead state
   }
   
   if(IsButtonPressed(BUTTON0))
@@ -298,6 +301,19 @@ static void LaserTagSM_ModulateOff(void)
     LaserTag_Toggle = FALSE;
   }
 }
+
+static void LaserTagSM_Recover(void)
+{
+   u16RecoverTime++;
+   LedOn(ORANGE);
+   if(u16RecoverTime>=5000)
+   {
+     LedOff(ORANGE);
+     u16RecoverTime = 0;
+     LaserTag_StateMachine = LaserTagSM_Idle;
+   }
+}
+
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* Handle an error */
 static void LaserTagSM_Error(void)          
