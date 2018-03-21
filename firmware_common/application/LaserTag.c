@@ -57,6 +57,7 @@ static u16 u16countLow;
 static u16 u16Lives;
 static u16 u16RecoverTime;
 static u16 u16soundCount;
+static u16 delimiter = 600;
 
 /**********************************************************************************************************************
 Function Definitions
@@ -116,6 +117,7 @@ void gotShot(void)
       PWMAudioSetFrequency(BUZZER1, 320);
       u16Lives--;
       LedOff(WHITE);
+      LedOn(RED);
      LaserTag_StateMachine = LaserTagSM_Recover;
   }
  else if (rHigh) 
@@ -173,7 +175,7 @@ void LaserTagInitialize(void)
     u16RecoverTime = 0;
   /* Set count sound to 0 to start */
     u16soundCount = 0;
-   /* Player starts with 3 lives */
+  /* Player starts with 3 lives */
     u16Lives = 3;
   /* Set 5ms counter to 0 to start*/
   u16Count5ms = 0;
@@ -233,7 +235,6 @@ static void LaserTagSM_Idle(void)
 {
   gotShot();
   LedOff(PURPLE);
-  
   if(IsButtonPressed(BUTTON0))
   {
     LaserTag_StateMachine = LaserTagSM_ModulateOn;
@@ -263,8 +264,6 @@ static void LaserTagSM_Idle(void)
       LedOff(YELLOW);
       LaserTag_StateMachine = LaserTagSM_DeadState;
   }
-  
- 
 
 } /* end LaserTagSM_Idle() */
 /*
@@ -325,8 +324,14 @@ static void LaserTagSM_Recover(void)
   {
     PWMAudioOff(BUZZER1);
   }
+   if (u16RecoverTime % delimiter == 0)
+   {
+    LedToggle(RED);
+    delimiter -= 25;
+   }
    if(u16RecoverTime>=5000)
    {
+     delimiter = 600;
      LedOff(RED);
      u16RecoverTime = 0;
      LaserTag_StateMachine = LaserTagSM_Idle;
