@@ -1100,7 +1100,7 @@ Initial output values are stored here.
 0: No effect
 1: Clears the data to be driven on the I/O line.
 */
-#define PIOA_CODR_INIT (u32)0x30000000
+#define PIOA_CODR_INIT (u32)0x30004000
 /* 
     31 [0] PA_31_HEARTBEAT output high 
     30 [0] PA_30_AN_DEMO N/A
@@ -1123,7 +1123,7 @@ Initial output values are stored here.
     16 [0] PA_16_BLADE_CS output high
 
     15 [0] PA_15_BLADE_SCK N/A
-    14 [0] PA_14_BLADE_MOSI N/A
+    14 [1] PA_14_BLADE_MOSI low
     13 [0] PA_13_BLADE_MISO N/A
     12 [0] PA_12_BLADE_UPOMI N/A
 

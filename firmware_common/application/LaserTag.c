@@ -52,7 +52,6 @@ Variable names shall start with "LaserTag_" and be declared as static.
 static fnCode_type LaserTag_StateMachine; 
 static bool LaserTag_Toggle;
 static u8 u8controlBit;
-static u16 u16ToggleOn;
 static u16 u16Count5ms;
 
 /**********************************************************************************************************************
@@ -76,7 +75,6 @@ void LaserTagToggler(void)
     LedOn(PURPLE);
     pu32ToggleGPIO = (u32*)(&(AT91C_BASE_PIOA->PIO_SODR));
     LaserTag_Toggle = FALSE;
-    u16ToggleOn++;
   }
   else
   {
@@ -92,15 +90,31 @@ Function: gotShot
 Description:
 Checks if the modulated signal of 38 kHz is received by the GPIO pin PA_14_BLADE_MOSI.
 Requires:
-PA_14_BLADE_MOSI is configured correctly as an input pin
+PA_14_BLADE_MOSI is configured correctly as an input pin, must check if receives voltage HIGH
+for 5 ms, then VOLTAGE LOW for 5ms, then register that it has been hit and turn an LED on for a bit.
+
 Promises:
 Return true if the signal has been received.
 */
 bool gotShot(void)
 {
+    u32 *pu32Address;
+    pu32Address = (u32*)(&(AT91C_BASE_PIOA->PIO_PDSR));
+    bool rHigh = (*pu32Address) & 0x00004000;
+    if ((*pu32Address) & 0x00004000)  //if bit 14 is on
+    {
+      LedOn(GREEN);
+    }
+    else
+    {
+      LedOn(BLUE);
+      LedOff(GREEN);
+    }
+  //pu32InterruptAddress |= PA_14_BLADE_MOSI;
+  
   u16 u16fiveInputCheck;
   if (u8controlBit == 0x01)
-  {
+  { 
     
   }
 }
@@ -122,7 +136,7 @@ Promises:
 */
 void LaserTagInitialize(void)
 {
-  u16ToggleOn = 0;
+  /* Enable the Interrupt Reg's for MOSI */
     /* Set 5ms counter to 0 to start*/
   u16Count5ms = 0;
      /* Set Toggle to false to start. */
@@ -179,6 +193,7 @@ State Machine Function Definitions
 */
 static void LaserTagSM_Idle(void)
 {
+  gotShot();
   LedOn(RED);
   LedOff(CYAN);
   if(IsButtonPressed(BUTTON0))
@@ -192,10 +207,11 @@ the proper signal to send to pin and ultimately transmitter
 */
 static void LaserTagSM_ModulateOn(void)
 {
-    LedOn(CYAN);
-    LedOff(RED);
+  gotShot();
+  LedOn(CYAN);
+  LedOff(RED);
   u8controlBit = 1;
- TimerStart(TIMER_CHANNEL1);
+  TimerStart(TIMER_CHANNEL1);
   if(u16Count5ms >= 4)
   {
     u16Count5ms = 0;
@@ -209,6 +225,7 @@ static void LaserTagSM_ModulateOn(void)
 
 static void LaserTagSM_ModulateOff(void)
 {
+  gotShot();
   u8controlBit = 0;
   if(u16Count5ms >= 4)
   {
