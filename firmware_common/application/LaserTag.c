@@ -114,8 +114,10 @@ void gotShot(void)
       u16countHigh = 0;
       u16countLow = 0;
       LedOn(WHITE);
+      PWMAudioSetFrequency(BUZZER1, 320);
       u16Lives--;
       LedOff(WHITE);
+      LedOn(RED);
      LaserTag_StateMachine = LaserTagSM_Recover;
     }
     else if (rHigh) 
@@ -139,6 +141,7 @@ void gotShot(void)
 void reset(void)
 {
   u16Lives = 3;
+  u16soundCount = 0;
   LedOff(RED);
   LedOn(CYAN);
   LedOn(GREEN);
@@ -320,15 +323,15 @@ static void LaserTagSM_Recover(void)
     LedToggle(RED);
     delimiter -= 25;
    }
-  PWMAudioSetFrequency(BUZZER1, 500);
+  PWMAudioSetFrequency(BUZZER2, 500);
  //first buzz
   if(u16RecoverTime>0 && u16RecoverTime<100)
   {
-    PWMAudioOn(BUZZER1);
+    PWMAudioOn(BUZZER2);
   }
   else
   {
-    PWMAudioOff(BUZZER1);
+    PWMAudioOff(BUZZER2);
   }
    if(u16RecoverTime>=5000)
    {
@@ -342,12 +345,44 @@ static void LaserTagSM_Recover(void)
 /* if you lose all your lives, assumes that all LED's are off upon entering state */
 static void LaserTagSM_DeadState(void)
 {
-  LedOn(RED);
+  u16soundCount++;
+  //first buzz
+  if (u16soundCount > 0 && u16soundCount < 100)
+  {
+    PWMAudioSetFrequency(BUZZER2, 500);
+    PWMAudioOn(BUZZER2);
+  }
+  else
+  {
+    PWMAudioOff(BUZZER2);
+  }
+  //second buzz
+  if (u16soundCount > 800 && u16soundCount < 1000)
+  {
+    PWMAudioSetFrequency(BUZZER2, 400);
+    PWMAudioOn(BUZZER2);
+  }
+  else
+  {
+    PWMAudioOff(BUZZER2);
+  }
+  //third buzz
+   if (u16soundCount > 2000 && u16soundCount < 3000)
+  {
+    PWMAudioSetFrequency(BUZZER2, 200);
+    PWMAudioOn(BUZZER2);
+  }
+  else
+  {
+    PWMAudioOff(BUZZER2);
+  }
+      LedOn(RED);
   if (IsButtonPressed(BUTTON2))
   {
       reset();
       LaserTag_StateMachine = LaserTagSM_Idle;
   }
+
 }
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* Handle an error */
