@@ -97,7 +97,7 @@ for 5 ms, then VOLTAGE LOW for 5ms, then register that it has been hit and turn 
 Promises:
 Return true if the signal has been received.
 */
-bool gotShot(void)
+void gotShot(void)
 {
     u32 *pu32Address;
     pu32Address = (u32*)(&(AT91C_BASE_PIOA->PIO_PDSR));
@@ -133,6 +133,14 @@ bool gotShot(void)
       LedOff(WHITE);
     }
     
+}
+void reset(void)
+{
+  u16Lives = 3;
+  LedOff(RED);
+  LedOn(CYAN);
+  LedOn(GREEN);
+  LedOn(YELLOW);
 }
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* Protected functions                                                                                                */
@@ -296,6 +304,16 @@ static void LaserTagSM_ModulateOff(void)
     u16Count5ms++;
     TimerStop(TIMER_CHANNEL1);
     LaserTag_Toggle = FALSE;
+  }
+}
+/* if you lose all your lives, assumes that all LED's are off upon entering state */
+static void LaserTagSM_DeadState(void)
+{
+  LedOn(RED);
+  if (IsButtonPressed(BUTTON2))
+  {
+      reset();
+      LaserTag_StateMachine = LaserTagSM_Idle;
   }
 }
 /*-------------------------------------------------------------------------------------------------------------------*/
