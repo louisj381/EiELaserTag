@@ -56,7 +56,6 @@ static u16 u16countHigh;
 static u16 u16countLow;
 static u16 u16Lives;
 static u16 u16RecoverTime;
-static u16 u16soundCount;
 static u16 delimiter = 600;
 
 /**********************************************************************************************************************
@@ -109,18 +108,17 @@ void gotShot(void)
     {
       rHigh = TRUE;
     }
- if (u16countHigh ==5 && u16countLow==5) 
- {
+    if (u16countHigh ==5 && u16countLow==5) 
+    {
       u16countHigh = 0;
       u16countLow = 0;
       LedOn(WHITE);
-      PWMAudioSetFrequency(BUZZER1, 320);
       u16Lives--;
       LedOff(WHITE);
       LedOn(RED);
      LaserTag_StateMachine = LaserTagSM_Recover;
-  }
- else if (rHigh) 
+    }
+    else if (rHigh) 
     {
       u16countHigh++;
       LedOff(WHITE);
@@ -141,7 +139,6 @@ void gotShot(void)
 void reset(void)
 {
   u16Lives = 3;
-  u16soundCount = 0;
   LedOff(RED);
   LedOn(CYAN);
   LedOn(GREEN);
@@ -173,8 +170,7 @@ void LaserTagInitialize(void)
     u16countLow = 0;
   /* Set recover count to 0 to start */
     u16RecoverTime = 0;
-  /* Set count sound to 0 to start */
-    u16soundCount = 0;
+  
   /* Player starts with 3 lives */
     u16Lives = 3;
   /* Set 5ms counter to 0 to start*/
@@ -239,6 +235,7 @@ static void LaserTagSM_Idle(void)
   {
     LaserTag_StateMachine = LaserTagSM_ModulateOn;
   }
+  
   if(u16Lives == 3)
   {
       LedOn(CYAN);
@@ -312,18 +309,8 @@ static void LaserTagSM_ModulateOff(void)
 
 static void LaserTagSM_Recover(void)
 {
+
   u16RecoverTime++;
-  LedOn(RED);
-  PWMAudioSetFrequency(BUZZER1, 500);
- //first buzz
-  if(u16RecoverTime>0 && u16RecoverTime<100)
-  {
-    PWMAudioOn(BUZZER1);
-  }
-  else
-  {
-    PWMAudioOff(BUZZER1);
-  }
    if (u16RecoverTime % delimiter == 0)
    {
     LedToggle(RED);
@@ -341,39 +328,6 @@ static void LaserTagSM_Recover(void)
 /* if you lose all your lives, assumes that all LED's are off upon entering state */
 static void LaserTagSM_DeadState(void)
 {
-  PWMAudioSetFrequency(BUZZER1, 500);
-  PWMAudioSetFrequency(BUZZER2, 400);
-  u16soundCount++;
- //first buzz
-  if(u16soundCount>0 && u16soundCount<100)
-  {
-    PWMAudioOn(BUZZER1);
-  }
-  else
-  {
-    PWMAudioOff(BUZZER1);
-  }
-  //seccond buzz
-  if(u16soundCount>800 && u16soundCount<1000)
-  {
-    PWMAudioOn(BUZZER2);
-  }
-  else
-  {
-    PWMAudioOff(BUZZER2);
-  }
-  
-  
-  //third buzz
-  if(u16soundCount>2000 && u16soundCount<3000)
-  {
-    PWMAudioSetFrequency(BUZZER1, 200);
-    PWMAudioOn(BUZZER1);
-  }
-  else
-  {
-    PWMAudioOff(BUZZER1);
-  }
   LedOn(RED);
   if (IsButtonPressed(BUTTON2))
   {
