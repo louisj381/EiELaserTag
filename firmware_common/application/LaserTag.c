@@ -53,6 +53,8 @@ static fnCode_type LaserTag_StateMachine;
 static bool LaserTag_Toggle;
 static u8 u8controlBit;
 static u16 u16Count5ms;
+static u16 u16countHigh;
+static u16 u16countLow;
 
 /**********************************************************************************************************************
 Function Definitions
@@ -100,23 +102,37 @@ bool gotShot(void)
 {
     u32 *pu32Address;
     pu32Address = (u32*)(&(AT91C_BASE_PIOA->PIO_PDSR));
-    bool rHigh = (*pu32Address) & 0x00004000;
-    if ((*pu32Address) & 0x00004000)  //if bit 14 is on
+    u32 u32truthValue = (*pu32Address) & 0x00004000;
+    bool rHigh = FALSE;
+    if(u32truthValue == 0x00004000)
     {
-      LedOn(GREEN);
+      rHigh = TRUE;
     }
-    else
-    {
-      LedOn(BLUE);
-      LedOff(GREEN);
-    }
-  //pu32InterruptAddress |= PA_14_BLADE_MOSI;
   
-  u16 u16fiveInputCheck;
-  if (u8controlBit == 0x01)
-  { 
+   
+    if (u16countHigh >=5 && u16countLow>=5) 
+    {
+      u16countHigh = 0;
+      u16countLow = 0;
+      LedOn(WHITE);
+    }
+    else if (rHigh) 
+    {
+      u16countHigh++;
+      LedOff(WHITE);
+    }
+    else if (!rHigh && u16countHigh!=5) 
+    {
+      u16countHigh = 0;
+      u16countLow = 0;
+      LedOff(WHITE);
+    }
+   else if (!rHigh && u16countHigh==5) 
+    {
+      u16countLow++;
+      LedOff(WHITE);
+    }
     
-  }
 }
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* Protected functions                                                                                                */
@@ -137,7 +153,14 @@ Promises:
 void LaserTagInitialize(void)
 {
   /* Enable the Interrupt Reg's for MOSI */
-    /* Set 5ms counter to 0 to start*/
+  
+  /* Set counter to 0 to start*/
+    u16countHigh = 0;
+  /* Set counter to 0 to start*/
+    u16countLow = 0;
+  
+   
+  /* Set 5ms counter to 0 to start*/
   u16Count5ms = 0;
      /* Set Toggle to false to start. */
   LaserTag_Toggle = FALSE;
