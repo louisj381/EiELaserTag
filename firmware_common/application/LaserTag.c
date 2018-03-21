@@ -51,12 +51,12 @@ Variable names shall start with "LaserTag_" and be declared as static.
 ***********************************************************************************************************************/
 static fnCode_type LaserTag_StateMachine; 
 static bool LaserTag_Toggle;
-static u8 u8controlBit;
 static u16 u16Count5ms;
 static u16 u16countHigh;
 static u16 u16countLow;
 static u16 u16Lives;
 static u16 u16RecoverTime;
+static u16 delimiter = 600;
 
 /**********************************************************************************************************************
 Function Definitions
@@ -115,6 +115,7 @@ void gotShot(void)
       LedOn(WHITE);
       u16Lives--;
       LedOff(WHITE);
+      LedOn(RED);
      LaserTag_StateMachine = LaserTagSM_Recover;
     }
     else if (rHigh) 
@@ -170,7 +171,7 @@ void LaserTagInitialize(void)
   /* Set recover count to 0 to start */
     u16RecoverTime = 0;
   
-   /* Player starts with 3 lives */
+  /* Player starts with 3 lives */
     u16Lives = 3;
   /* Set 5ms counter to 0 to start*/
   u16Count5ms = 0;
@@ -230,6 +231,11 @@ static void LaserTagSM_Idle(void)
 {
   gotShot();
   LedOff(PURPLE);
+  if(IsButtonPressed(BUTTON0))
+  {
+    LaserTag_StateMachine = LaserTagSM_ModulateOn;
+  }
+  
   if(u16Lives == 3)
   {
       LedOn(CYAN);
@@ -253,12 +259,7 @@ static void LaserTagSM_Idle(void)
       LedOff(CYAN);
       LedOff(GREEN);
       LedOff(YELLOW);
-      //make a dead state
-  }
-  
-  if(IsButtonPressed(BUTTON0))
-  {
-    LaserTag_StateMachine = LaserTagSM_ModulateOn;
+      LaserTag_StateMachine = LaserTagSM_DeadState;
   }
 
 } /* end LaserTagSM_Idle() */
@@ -269,8 +270,6 @@ static void LaserTagSM_ModulateOn(void)
 {
   gotShot();
   LedOn(PURPLE);
-  LedOff(RED);
-  u8controlBit = 1;
   TimerStart(TIMER_CHANNEL1);
   if(u16Count5ms >= 4)
   {
@@ -287,8 +286,6 @@ static void LaserTagSM_ModulateOff(void)
 {
   gotShot();
   LedOff(PURPLE);
-  LedOn(RED);
-  u8controlBit = 0;
   if(u16Count5ms >= 4)
   {
     u16Count5ms = 0;
@@ -312,11 +309,17 @@ static void LaserTagSM_ModulateOff(void)
 
 static void LaserTagSM_Recover(void)
 {
-   u16RecoverTime++;
-   LedOn(ORANGE);
+
+  u16RecoverTime++;
+   if (u16RecoverTime % delimiter == 0)
+   {
+    LedToggle(RED);
+    delimiter -= 25;
+   }
    if(u16RecoverTime>=5000)
    {
-     LedOff(ORANGE);
+     delimiter = 600;
+     LedOff(RED);
      u16RecoverTime = 0;
      LaserTag_StateMachine = LaserTagSM_Idle;
    }
