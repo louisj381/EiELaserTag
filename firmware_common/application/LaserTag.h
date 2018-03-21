@@ -51,19 +51,20 @@ Function Declarations
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* Public functions                                                                                                   */
 /*--------------------------------------------------------------------------------------------------------------------*/
-
+void LaserTagToggler(void);
+void gotShot(void);
 
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* Protected functions                                                                                                */
 /*--------------------------------------------------------------------------------------------------------------------*/
 void LaserTagInitialize(void);
 void LaserTagRunActiveState(void);
-
+void EnableInterruptReg(void);
+void reset(void);
 
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* Private functions                                                                                                  */
 /*--------------------------------------------------------------------------------------------------------------------*/
-void LaserTagToggler(void);
 
 /***********************************************************************************************************************
 State Machine Declarations
@@ -75,6 +76,9 @@ static void LaserTagSM_Error(void);
 static void LaserTagSM_ModulateOn(void);
 
 static void LaserTagSM_ModulateOff(void);
+
+static void LaserTagSM_Recover(void);
+static void LaserTagSM_DeadState(void);
 
 #endif /* __LASER_TAG_H */
 

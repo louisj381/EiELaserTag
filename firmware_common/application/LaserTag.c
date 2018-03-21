@@ -51,8 +51,13 @@ Variable names shall start with "LaserTag_" and be declared as static.
 ***********************************************************************************************************************/
 static fnCode_type LaserTag_StateMachine; 
 static bool LaserTag_Toggle;
-static u16 u16ToggleOn;
 static u16 u16Count5ms;
+static u16 u16countHigh;
+static u16 u16countLow;
+static u16 u16Lives;
+static u16 u16RecoverTime;
+static u16 delimiter = 600;
+static u16 u16soundCount;
 
 /**********************************************************************************************************************
 Function Definitions
@@ -69,15 +74,78 @@ is called.
 */
 void LaserTagToggler(void)
 {
+  u32 *pu32ToggleGPIO;
   if(LaserTag_Toggle)
   {
+    pu32ToggleGPIO = (u32*)(&(AT91C_BASE_PIOA->PIO_SODR));
     LaserTag_Toggle = FALSE;
-    u16ToggleOn++;
   }
   else
   {
+    pu32ToggleGPIO = (u32*)(&(AT91C_BASE_PIOA->PIO_CODR));
     LaserTag_Toggle = TRUE;
   }
+  *pu32ToggleGPIO = PA_10_I2C_SCL;
+}
+/* end of LaserTagToggler */
+/*------------------------------------------------------------
+Function: gotShot
+Description:
+Checks if the modulated signal of 38 kHz is received by the GPIO pin PA_14_BLADE_MOSI.
+Requires:
+PA_14_BLADE_MOSI is configured correctly as an input pin, must check if receives voltage HIGH
+for 5 ms, then VOLTAGE LOW for 5ms, then register that it has been hit and turn an LED on for a bit.
+
+Promises:
+Return true if the signal has been received.
+*/
+void gotShot(void)
+{
+    u32 *pu32Address;
+    pu32Address = (u32*)(&(AT91C_BASE_PIOA->PIO_PDSR));
+    u32 u32truthValue = (*pu32Address) & 0x00004000;
+    bool rHigh = FALSE;
+    if(u32truthValue == 0x00004000)
+    {
+      rHigh = TRUE;
+    }
+    if (u16countHigh ==5 && u16countLow==5) 
+    {
+      u16countHigh = 0;
+      u16countLow = 0;
+      LedOn(WHITE);
+      PWMAudioSetFrequency(BUZZER1, 320);
+      u16Lives--;
+      LedOff(WHITE);
+      LedOn(RED);
+     LaserTag_StateMachine = LaserTagSM_Recover;
+    }
+    else if (rHigh) 
+    {
+      u16countHigh++;
+      LedOff(WHITE);
+    }
+    else if (!rHigh && u16countHigh!=5) 
+    {
+      u16countHigh = 0;
+      u16countLow = 0;
+      LedOff(WHITE);
+    }
+   else if (!rHigh && u16countHigh==5) 
+    {
+      u16countLow++;
+      LedOff(WHITE);
+    }
+    
+}
+void reset(void)
+{
+  u16Lives = 3;
+  u16soundCount = 0;
+  LedOff(RED);
+  LedOn(CYAN);
+  LedOn(GREEN);
+  LedOn(YELLOW);
 }
 /*--------------------------------------------------------------------------------------------------------------------*/
 /* Protected functions                                                                                                */
@@ -97,8 +165,19 @@ Promises:
 */
 void LaserTagInitialize(void)
 {
-  u16ToggleOn = 0;
-    /* Set 5ms counter to 0 to start*/
+  /* Enable the Interrupt Reg's for MOSI */
+  
+  /* Set counter to 0 to start*/
+    u16countHigh = 0;
+  /* Set counter to 0 to start*/
+    u16countLow = 0;
+  /* Set recover count to 0 to start */
+    u16RecoverTime = 0;
+  /* Set count sound to 0 to start */
+    u16soundCount = 0;
+   /* Player starts with 3 lives */
+    u16Lives = 3;
+  /* Set 5ms counter to 0 to start*/
   u16Count5ms = 0;
      /* Set Toggle to false to start. */
   LaserTag_Toggle = FALSE;
@@ -107,7 +186,7 @@ void LaserTagInitialize(void)
    /* Sets LaserTagToggler to the timer function ptr */
   TimerAssignCallback(TIMER_CHANNEL1, LaserTagToggler);
    /* Starts the timer */
- // TimerStart(TIMER_CHANNEL1);
+  TimerStart(TIMER_CHANNEL1);
   if( 1 )
   {
     LaserTag_StateMachine = LaserTagSM_Idle;
@@ -154,29 +233,55 @@ State Machine Function Definitions
 */
 static void LaserTagSM_Idle(void)
 {
+  gotShot();
+  LedOff(PURPLE);
+  
   if(IsButtonPressed(BUTTON0))
   {
-    LedOn(CYAN);
-    LedOff(RED);
     LaserTag_StateMachine = LaserTagSM_ModulateOn;
   }
-  else
+  
+  if(u16Lives == 3)
   {
-    LedOff(CYAN);
-    LedOn(RED);
-    LaserTag_StateMachine = LaserTagSM_ModulateOff;
+      LedOn(CYAN);
+      LedOn(GREEN);
+      LedOn(YELLOW);
   }
+  else if(u16Lives == 2)
+  {
+      LedOff(CYAN);
+      LedOn(GREEN);
+      LedOn(YELLOW);
+  }
+    else if(u16Lives == 1)
+  {
+      LedOff(CYAN);
+      LedOff(GREEN);
+      LedOn(YELLOW);
+  }
+    else if(u16Lives == 0)
+  {
+      LedOff(CYAN);
+      LedOff(GREEN);
+      LedOff(YELLOW);
+      LaserTag_StateMachine = LaserTagSM_DeadState;
+  }
+  
+ 
+
 } /* end LaserTagSM_Idle() */
 /*
 the proper signal to send to pin and ultimately transmitter
 */
 static void LaserTagSM_ModulateOn(void)
 {
+  gotShot();
+  LedOn(PURPLE);
   TimerStart(TIMER_CHANNEL1);
   if(u16Count5ms >= 4)
   {
     u16Count5ms = 0;
-    LaserTag_StateMachine = LaserTagSM_Idle;
+    LaserTag_StateMachine = LaserTagSM_ModulateOff;
   }
   else
   {
@@ -186,10 +291,20 @@ static void LaserTagSM_ModulateOn(void)
 
 static void LaserTagSM_ModulateOff(void)
 {
+  gotShot();
+  LedOff(PURPLE);
   if(u16Count5ms >= 4)
   {
     u16Count5ms = 0;
-    LaserTag_StateMachine = LaserTagSM_Idle;
+    if (IsButtonPressed(BUTTON0))
+    {
+       LaserTag_StateMachine = LaserTagSM_ModulateOn;
+    }
+    else
+    {
+       LaserTag_StateMachine = LaserTagSM_Idle;      
+    }
+
   }
   else
   {
@@ -197,6 +312,77 @@ static void LaserTagSM_ModulateOff(void)
     TimerStop(TIMER_CHANNEL1);
     LaserTag_Toggle = FALSE;
   }
+}
+
+static void LaserTagSM_Recover(void)
+{
+
+  u16RecoverTime++;
+   if (u16RecoverTime % delimiter == 0)
+   {
+    LedToggle(RED);
+    delimiter -= 25;
+   }
+  PWMAudioSetFrequency(BUZZER2, 500);
+ //first buzz
+  if(u16RecoverTime>0 && u16RecoverTime<100)
+  {
+    PWMAudioOn(BUZZER2);
+  }
+  else
+  {
+    PWMAudioOff(BUZZER2);
+  }
+   if(u16RecoverTime>=5000)
+   {
+     delimiter = 600;
+     LedOff(RED);
+     u16RecoverTime = 0;
+     LaserTag_StateMachine = LaserTagSM_Idle;
+   }
+}
+
+/* if you lose all your lives, assumes that all LED's are off upon entering state */
+static void LaserTagSM_DeadState(void)
+{
+  u16soundCount++;
+  //first buzz
+  if (u16soundCount > 0 && u16soundCount < 100)
+  {
+    PWMAudioSetFrequency(BUZZER2, 500);
+    PWMAudioOn(BUZZER2);
+  }
+  else
+  {
+    PWMAudioOff(BUZZER2);
+  }
+  //second buzz
+  if (u16soundCount > 800 && u16soundCount < 1000)
+  {
+    PWMAudioSetFrequency(BUZZER2, 400);
+    PWMAudioOn(BUZZER2);
+  }
+  else
+  {
+    PWMAudioOff(BUZZER2);
+  }
+  //third buzz
+   if (u16soundCount > 2000 && u16soundCount < 3000)
+  {
+    PWMAudioSetFrequency(BUZZER2, 200);
+    PWMAudioOn(BUZZER2);
+  }
+  else
+  {
+    PWMAudioOff(BUZZER2);
+  }
+      LedOn(RED);
+  if (IsButtonPressed(BUTTON2))
+  {
+      reset();
+      LaserTag_StateMachine = LaserTagSM_Idle;
+  }
+
 }
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* Handle an error */

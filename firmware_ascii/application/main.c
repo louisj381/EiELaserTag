@@ -39,7 +39,7 @@ contraints but must complete execution regardless of success or failure of start
 the 1ms period.
 ***********************************************************************************************************************/
 
-void main(void)
+  void main(void)
 {
   G_u32SystemFlags |= _SYSTEM_INITIALIZING;
 
@@ -63,7 +63,7 @@ void main(void)
   TWIInitialize();
   Adc12Initialize();
   
-  LcdInitialize();
+  //LcdInitialize();
   LedInitialize();
   AntInitialize();
   AntApiInitialize();
@@ -95,7 +95,7 @@ void main(void)
     Adc12RunActiveState();
     MessagingRunActiveState();
     DebugRunActiveState();
-    LcdRunActiveState();
+    //LcdRunActiveState();
     AntRunActiveState();
     AntApiRunActiveState();
     SdCardRunActiveState();
