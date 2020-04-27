@@ -4,7 +4,7 @@ Laser Tag with IR emitters and receivers, complete with three lives and resets f
 
 ## See it in Action
 
-![Laser Tag Demo](demo/laserTagDemo.mp4)
+![Laser Tag Demo](demo/laserTagDemo.gif)
 
 ## How it works
 ![Laser Tag Blueprint](demo/eieLaserBoard.jpeg)
